@@ -105,18 +105,18 @@ class MuiTable extends Component {
   }
 
   cellRenderer = ({columnIndex, rowIndex, key, style}) => {
-    const { data, columns, includeHeaders, classes, orderBy, orderDirection, onHeaderClick } = this.props;
+    const { data, columns, includeHeaders, classes, orderBy, orderDirection, onHeaderClick, onCellClick } = this.props;
     const column = columns[columnIndex];
     const { style: cellStyle, ...cellProps} = column.cellProps || {};
 
     let contents;
     const isHeader = includeHeaders && rowIndex === 0;
+    const headerOffset = includeHeaders ? 1 : 0;
+    const rowData = data[rowIndex - headerOffset];
 
     if (isHeader) {
       contents = column.header || column.name;
     } else {
-      const headerOffset = includeHeaders ? 1 : 0;
-      const rowData = data[rowIndex - headerOffset];
       contents = column.cell ? column.cell(rowData) : rowData[column.name]
     }
 
@@ -131,6 +131,7 @@ class MuiTable extends Component {
         component="div"
         className={className}
         key={key}
+        onClick={() => onCellClick && onCellClick(rowData, column.name)}
         style={{ ...style, ...cellStyle }}
         {...cellProps}
       >
@@ -234,6 +235,7 @@ MuiTable.propTypes = {
   orderBy: PropTypes.string,
   orderDirection: PropTypes.string,
   onHeaderClick: PropTypes.func,
+  onCellClick: PropTypes.func,
   classes: PropTypes.object,
   style: PropTypes.object
 }

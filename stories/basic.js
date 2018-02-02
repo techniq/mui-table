@@ -42,6 +42,27 @@ storiesOf('Basic', module)
       </ParentSize>
     )
   })
+  .add('clickable cells', () => {
+    const data = createPersonData(5);
+    const onCellClick = (data, column) => 
+      alert(`Clicked cell in column '${column}' containing '${data[column]}'`);
+    return (
+      <ParentSize>
+        {({ width, height }) => (
+          <MuiTable
+            data={data}
+            columns={[
+              { name: 'firstName' },
+              { name: 'lastName' }
+            ]}
+            width={width}
+            style={{ backgroundColor: 'white' }}
+            onCellClick={onCellClick}
+          />
+        )}
+      </ParentSize>
+    );
+  })
   .add('composite cells', () => {
     const data = createPersonData(1000);
     return (
