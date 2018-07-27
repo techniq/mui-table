@@ -23,6 +23,24 @@ storiesOf('Basic', module)
     );
   })
 
+  .add('simple hover select', () => {    
+    const data = createPersonData(5);
+    return (
+      <MuiTable
+        data={data}
+
+        columns={[{ name: "firstName" }, { name: "lastName" }]}
+        width={500}
+        style={{ backgroundColor: "white" }}
+        rowSelect={true}
+        rowHover={true}
+        onRowSelect={(selected, rowData)=>alert('Row select: selected=' + JSON.stringify(selected) + ', rowData=' + JSON.stringify(rowData))}
+        onCellClick={(column,rowData)=>alert('Cell click: column=' + JSON.stringify(column) + ', rowData=' + JSON.stringify(rowData))}
+        rowId='id'      
+      />
+    );
+  })
+
   .add('responsive', () => {
     const data = createPersonData(5);
     return (
