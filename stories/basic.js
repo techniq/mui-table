@@ -34,8 +34,8 @@ storiesOf('Basic', module)
         style={{ backgroundColor: "white" }}
         rowSelect={true}
         rowHover={true}
-        onRowSelect={(selected, rowData)=>alert('Row select: selected=' + JSON.stringify(selected) + ', rowData=' + JSON.stringify(rowData))}
-        onCellClick={(column,rowData)=>alert('Cell click: column=' + JSON.stringify(column) + ', rowData=' + JSON.stringify(rowData))}
+        onRowSelect={(selected, rowData)=>console.log('Row select: selected=' + JSON.stringify(selected) + ', rowData=' + JSON.stringify(rowData))}
+        onCellClick={(column,rowData)=>console.log('Cell click: column=' + JSON.stringify(column) + ', rowData=' + JSON.stringify(rowData))}
         rowId='id'      
       />
     );
