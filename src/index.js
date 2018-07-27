@@ -70,7 +70,21 @@ export const styles = theme => ({
     boxSizing: 'border-box',
     display: 'flex',
     alignItems: 'center'
+    // borderRight: `1px solid ${theme.palette.text.lightDivider}`,    
+  },
+  cellSelected: {
+    boxSizing: 'border-box',
+    display: 'flex',
+    alignItems: 'center',
     // borderRight: `1px solid ${theme.palette.text.lightDivider}`,
+    background: 'lightgrey'
+  },
+  cellHovered: {
+    boxSizing: 'border-box',
+    display: 'flex',
+    alignItems: 'center',
+    // borderRight: `1px solid ${theme.palette.text.lightDivider}`,
+    background: 'grey'
   },
   cellContents: {
     whiteSpace: 'nowrap',
@@ -99,6 +113,7 @@ class MuiTable extends Component {
   };
 
   static defaultProps = {
+    rowId: 'id',
     rowHeight: 48,
     maxHeight: null,
     includeHeaders: false,
@@ -106,30 +121,66 @@ class MuiTable extends Component {
     fixedColumnCount: 0
   };
 
+  state = {
+    selected: [], //Used for tracking the selected row id's    
+    rowHoverId: null, //Used for tracking the current hovered row id
+  }
+  
   componentWillReceiveProps(nextProps) {
     if (nextProps.width !== this.props.width) {
       this.multiGrid.recomputeGridSize();
     }
   }
 
+  onCellClick(column, rowData) {    
+    const { rowId, rowSelect, onRowSelect, onCellClick } = this.props;        
+    if(rowSelect && (rowData && rowData[rowId])) {            
+      const copy = {...this.state.selected};
+      copy[rowData[rowId]] = !copy[rowData[rowId]];    
+      this.setState({selected: copy });
+      onRowSelect && onRowSelect(copy[rowData[rowId]], rowData);
+    }
+
+    onCellClick && onCellClick(column, rowData);
+  }  
+  
+  onMouseEnter(column, rowData) {        
+    const { rowId } = this.props;
+    rowData[rowId] && this.setState({ rowHoverId: rowData[rowId] && rowData[rowId] });    
+  }
+
+  onMouseLeave(column, rowData) {        
+    this.setState({ rowHoverId: null });    
+  }
+
   cellRenderer = ({ columnIndex, rowIndex, key, style }) => {
     const {
-      data,
-      columns,
-      includeHeaders,
+      data,      
+      columns,      
+      includeHeaders,            
       classes,
-      orderBy,
+      orderBy,      
       orderDirection,
       onHeaderClick,
       onCellClick,
+      rowId,      
+      rowHover,
+      rowSelect,
       cellProps: defaultCellProps
     } = this.props;
-    const column = columns[columnIndex];
+    
+    const {
+      selected,      
+      rowHoverId,
+    } = this.state;
 
+    const column = columns[columnIndex];
     const isHeader = includeHeaders && rowIndex === 0;
     const headerOffset = includeHeaders ? 1 : 0;
     const rowData = data && data[rowIndex - headerOffset];
-
+    const isSelected = rowSelect && selected[rowData[rowId]];
+    const isHovered = rowHover && rowHoverId === rowData[rowId];    
+    
     const resolveCellProps = cellProps =>
       typeof cellProps === 'function' ? cellProps(column, rowData) : cellProps;
     // TODO: Deep merge (do not override all defaultCellProps styles if column.cellProps.styles defined?)
@@ -149,25 +200,29 @@ class MuiTable extends Component {
     );
 
     const className = classNames(classes.cell, {
+      [classes.cellHovered]: isHovered,
+      [classes.cellSelected]: isSelected,
       [classes.cellHeader]: isHeader,
       [classes.cellInLastColumn]: columnIndex === columns.length - 1,
       [classes.cellInLastRow]: rowIndex === (data ? data.length : 0)
     });
 
-    const hasCellClick = !isHeader && onCellClick;
+    const hasCellClick = !isHeader && (onCellClick || rowSelect );
 
     return (
       <TableCell
         component="div"
         className={className}
-        key={key}
-        style={{
+        key={key}        
+        onMouseEnter={() => this.onMouseEnter(column, rowData)}
+        onMouseLeave={() => this.onMouseLeave(column, rowData)}
+        style={{          
           ...style,
           ...cellStyle,
           ...((hasCellClick || column.onClick) && { cursor: 'pointer' })
         }}
-        {...hasCellClick && {
-          onClick: () => onCellClick(column, rowData)
+        {...hasCellClick && {          
+          onClick: () => this.onCellClick(column, rowData)
         }} // Can be overridden by cellProps.onClick on column definition
         {...cellProps}
       >
@@ -204,6 +259,10 @@ class MuiTable extends Component {
       rowHeight,
       columnWidth,
       includeHeaders,
+      rowHover,
+      rowId,
+      rowSelect,
+      onRowSelect,
       classes,
       orderBy,
       orderDirection,
@@ -214,7 +273,7 @@ class MuiTable extends Component {
       theme,
       ...props
     } = this.props;
-
+    
     let calculatedHeight = 0;
     if (height) {
       calculatedHeight = height; // fixed height
@@ -240,7 +299,7 @@ class MuiTable extends Component {
         : calculatedHeightWithFooter;
     const multiGridHeight =
       containerHeight - (pagination ? paginationHeight : 0);
-
+//console.log(this.state);
     return (
       <Table
         component="div"
@@ -292,14 +351,18 @@ MuiTable.propTypes = {
   pagination: PropTypes.object,
   fitHeightToRows: PropTypes.bool,
   fixedRowCount: PropTypes.number,
-  fixedColumnCount: PropTypes.number,
+  fixedColumnCount: PropTypes.number,  
   rowHeight: PropTypes.number,
   columnWidth: PropTypes.number,
-  includeHeaders: PropTypes.bool,
+  includeHeaders: PropTypes.bool,  
   orderBy: PropTypes.string,
   orderDirection: PropTypes.string,
+  rowId: PropTypes.string,
+  rowSelect: PropTypes.bool,
+  rowHover: PropTypes.bool,
   onHeaderClick: PropTypes.func,
   onCellClick: PropTypes.func,
+  onRowSelect: PropTypes.func,  
   classes: PropTypes.object,
   cellProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
   style: PropTypes.object
