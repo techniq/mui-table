@@ -28,3 +28,7 @@ Property | Type | Required | Default | Description
 `pagination` | object | | | If defined, will add pagination to bottom of table and pass props to Material-UI's [TablePagination](https://material-ui.com/api/table-pagination/) component.  Must set `count`, `onChangePage`, `page`, and `rowsPerPage` if defined.
 `orderBy` | string | | | If defined, will show column's header with matching `name` using [TableSortLabel](https://material-ui.com/api/table-sort-label/)
 `orderDirection` | string | | 'desc' | The order of the sort direction
+`rowId` | string | | 'id' | The column name of the unique row identifier used with rowHover and rowSelect.
+`rowHover` | bool | | | If true, the cells within the associated row will change to the cellHovered class when the row is hovered over.
+`rowSelect` | bool | | | If true, the cells within the associated row will toggle between the cell and cellSelected class when the row is clicked on.
+`onRowSelect` | func | | | Called with column selected boolean status and row data when non-header row is selected or deselected. (ex. `onRowSelect={(selected, rowData)=>console.log('Row select: selected=' + JSON.stringify(selected) + ', rowData=' + JSON.stringify(rowData))} )      
