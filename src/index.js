@@ -1,328 +1,291 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import MultiGrid from 'react-virtualized/dist/commonjs/MultiGrid';
 import classNames from 'classnames';
+import merge from 'lodash.merge';
 
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableFooter from '@material-ui/core/TableFooter';
+import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
+import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 
-import { calcColumnWidth } from './utils';
-
-const FOOTER_BORDER_HEIGHT = 1;
+const resolveProp = (prop, args) => {
+  return typeof prop === 'function' ? prop(args) : prop;
+};
 
 export const styles = theme => ({
-  table: {
-    boxSizing: 'border-box',
-    border: `1px solid ${theme.palette.text.lightDivider}`,
-
-    '& .topLeftGrid': {
-      backgroundColor: theme.palette.grey['200'],
-      borderBottom: `2px solid ${theme.palette.divider}`,
-      borderRight: `2px solid ${theme.palette.divider}`,
-      color: theme.palette.text.secondary,
-      fontSize: theme.typography.pxToRem(12),
-
-      // Hide scrollbars on Chrome/Safari/IE
-      '&::-webkit-scrollbar': {
-        display: 'none'
-      },
-      '-ms-overflow-style': 'none'
-    },
-
-    '& .topRightGrid': {
-      backgroundColor: theme.palette.grey['200'],
-      borderBottom: `2px solid ${theme.palette.divider}`,
-      color: theme.palette.text.secondary,
-      fontSize: theme.typography.pxToRem(12),
-
-      // Hide scrollbars on Chrome/Safari/IE
-      '&::-webkit-scrollbar': {
-        display: 'none'
-      },
-      '-ms-overflow-style': 'none'
-    },
-
-    '& .bottomLeftGrid': {
-      backgroundColor: theme.palette.grey['200'],
-      borderRight: `2px solid ${theme.palette.divider}`,
-      color: theme.palette.text.secondary,
-      fontSize: theme.typography.pxToRem(13),
-
-      // Hide scrollbars on Chrome/Safari/IE
-      '&::-webkit-scrollbar': {
-        display: 'none'
-      },
-      '-ms-overflow-style': 'none'
-    },
-
-    '& .bottomRightGrid': {
-      color: theme.palette.text.primary,
-      fontSize: theme.typography.pxToRem(13),
-      outline: 'none' // See: https://github.com/bvaughn/react-virtualized/issues/381
-    }
-  },
-  cell: {
-    boxSizing: 'border-box',
-    display: 'flex',
-    alignItems: 'center'
-    // borderRight: `1px solid ${theme.palette.text.lightDivider}`,
-  },
   cellSelected: {
     backgroundColor: theme.palette.grey[100]
   },
   cellHovered: {
     backgroundColor: theme.palette.grey[200]
-  },
-  cellContents: {
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
-  },
-  cellHeader: {
-    fontSize: theme.typography.pxToRem(12),
-    fontWeight: theme.typography.fontWeightMedium,
-    color: theme.palette.text.secondary
-  },
-  cellInLastColumn: {
-    paddingRight: theme.spacing.unit * 3
-  },
-  cellInLastRow: {
-    borderBottom: 'none'
-  },
-  footer: {
-    borderTop: `${FOOTER_BORDER_HEIGHT}px solid ${theme.palette.divider}`
   }
 });
 
 class MuiTable extends Component {
-  static propTypes = {
-    width: PropTypes.number.isRequired
-  };
-
-  static defaultProps = {
-    rowHeight: 48,
-    maxHeight: null,
-    includeHeaders: false,
-    fixedRowCount: 0,
-    fixedColumnCount: 0
-  };
-
   state = {
     hoveredColumn: null,
     hoveredRowData: null
-  };
-
-  componentWillReceiveProps(nextProps) {
-    if (
-      nextProps.width !== this.props.width ||
-      nextProps.columns !== this.props.columns
-    ) {
-      this.multiGrid.recomputeGridSize();
-    }
-  }
-
-  cellRenderer = ({ columnIndex, rowIndex, key, style }) => {
-    const {
-      data,
-      columns,
-      includeHeaders,
-      isCellHovered,
-      isCellSelected,
-      classes,
-      orderBy,
-      orderDirection,
-      onHeaderClick,
-      onCellClick,
-      cellProps: defaultCellProps
-    } = this.props;
-
-    const { hoveredColumn, hoveredRowData } = this.state;
-
-    const column = columns[columnIndex];
-    const isHeader = includeHeaders && rowIndex === 0;
-    const headerOffset = includeHeaders ? 1 : 0;
-    const rowData = (data && data[rowIndex - headerOffset]) || {};
-
-    const isSelected = isCellSelected && isCellSelected(column, rowData);
-
-    const isHovered =
-      hoveredColumn &&
-      hoveredRowData &&
-      isCellHovered &&
-      isCellHovered(column, rowData, hoveredColumn, hoveredRowData);
-
-    const resolveCellProps = cellProps =>
-      typeof cellProps === 'function'
-        ? cellProps(column, rowData, hoveredColumn, hoveredRowData)
-        : cellProps;
-    // TODO: Deep merge (do not override all defaultCellProps styles if column.cellProps.styles defined?)
-    const { style: cellStyle, ...cellProps } = {
-      ...resolveCellProps(defaultCellProps),
-      ...resolveCellProps(column.cellProps)
-    };
-
-    const contents = (
-      <span className={classes.cellContents}>
-        {isHeader
-          ? column.header != null
-            ? column.header
-            : column.name
-          : column.cell
-            ? column.cell(rowData)
-            : rowData[column.name]}
-      </span>
-    );
-
-    const className = classNames(classes.cell, {
-      [classes.cellHovered]: isHovered,
-      [classes.cellSelected]: isSelected,
-      [classes.cellHeader]: isHeader,
-      [classes.cellInLastColumn]: columnIndex === columns.length - 1,
-      [classes.cellInLastRow]: rowIndex === (data ? data.length : 0)
-    });
-
-    const hasCellClick = !isHeader && onCellClick;
-
-    return (
-      <TableCell
-        component="div"
-        className={className}
-        key={key}
-        onMouseEnter={() => {
-          this.setState({ hoveredColumn: column, hoveredRowData: rowData });
-        }}
-        onMouseLeave={() =>
-          this.setState({ hoveredColumn: null, hoveredRowData: null })
-        }
-        style={{
-          ...style,
-          ...cellStyle,
-          ...((hasCellClick || column.onClick) && { cursor: 'pointer' })
-        }}
-        {...hasCellClick && {
-          onClick: () => onCellClick(column, rowData)
-        }} // Can be overridden by cellProps.onClick on column definition
-        {...cellProps}
-      >
-        {isHeader &&
-        column.onHeaderClick !== false &&
-        (column.onHeaderClick || onHeaderClick) ? (
-          <TableSortLabel
-            active={
-              orderBy &&
-              (orderBy === column.name || orderBy === column.orderBy) &&
-              rowIndex === 0
-            }
-            style={{ width: 'inherit' }} // fix text overflowing
-            direction={orderDirection}
-            onClick={() =>
-              column.onHeaderClick
-                ? column.onHeaderClick()
-                : onHeaderClick(column)
-            }
-          >
-            {contents}
-          </TableSortLabel>
-        ) : (
-          contents
-        )}
-      </TableCell>
-    );
   };
 
   render() {
     const {
       data,
       columns,
-      width,
-      height,
-      maxHeight,
-      pagination,
-      fitHeightToRows,
-      fixedRowCount,
-      fixedColumnCount,
-      rowHeight,
-      columnWidth,
+
+      rowProps,
+      headerRowProps,
+      bodyRowProps,
+
+      cellProps: defaultCellProps,
+      headerCellProps: defaultHeaderCellProps,
+      bodyCellProps: defaultBodyCellProps,
+
       includeHeaders,
-      classes,
-      orderBy,
-      orderDirection,
       onHeaderClick,
       onCellClick,
       isCellHovered,
       isCellSelected,
-      cellProps,
-      style,
-      theme,
+      pagination,
+      addPlaceholderRows,
+      orderBy,
+      orderDirection,
+
+      classes,
       ...props
     } = this.props;
 
-    let calculatedHeight = 0;
-    if (height) {
-      calculatedHeight = height; // fixed height
-    } else if (pagination && pagination.rowsPerPage && !fitHeightToRows) {
-      const rowCount =
-        pagination.rowsPerPage +
-        (fixedRowCount ? fixedRowCount : includeHeaders ? 1 : 0);
-      calculatedHeight = rowCount * rowHeight;
-    } else if (Array.isArray(data)) {
-      const rowCount =
-        data.length + (fixedRowCount ? fixedRowCount : includeHeaders ? 1 : 0);
-      calculatedHeight = rowCount * rowHeight;
-    }
-
-    const paginationHeight =
-      theme.mixins.toolbar.minHeight + FOOTER_BORDER_HEIGHT;
-
-    const calculatedHeightWithFooter =
-      calculatedHeight + (pagination ? paginationHeight : 0);
-    const containerHeight =
-      maxHeight != null
-        ? Math.min(calculatedHeightWithFooter, maxHeight)
-        : calculatedHeightWithFooter;
-    const multiGridHeight =
-      containerHeight - (pagination ? paginationHeight : 0);
+    const { hoveredColumn, hoveredRowData } = this.state;
 
     return (
-      <Table
-        component="div"
-        style={{ width, height: containerHeight, ...style }}
-        className={classes.table}
-        {...props}
-      >
-        <MultiGrid
-          cellRenderer={this.cellRenderer}
-          ref={el => (this.multiGrid = el)}
-          width={width}
-          columnWidth={
-            columnWidth ||
-            (({ index }) => calcColumnWidth(index, columns, width))
-          }
-          columnCount={Array.isArray(columns) ? columns.length : 0}
-          fixedColumnCount={fixedColumnCount}
-          enableFixedColumnScroll={fixedColumnCount > 0}
-          height={multiGridHeight}
-          rowHeight={rowHeight}
-          rowCount={
-            Array.isArray(data) ? data.length + (includeHeaders ? 1 : 0) : 0
-          }
-          fixedRowCount={fixedRowCount}
-          enableFixedRowScroll={fixedRowCount > 0}
-          // TODO: Read tehse from `classes` without classes.table inherirtance?  How to pass props.classes down to override?
-          classNameTopLeftGrid={'topLeftGrid'}
-          classNameTopRightGrid={'topRightGrid'}
-          classNameBottomLeftGrid={'bottomLeftGrid'}
-          classNameBottomRightGrid={'bottomRightGrid'}
-        />
+      <Table {...props}>
+        {includeHeaders && (
+          <TableHead>
+            <TableRow {...rowProps} {...headerRowProps}>
+              {columns &&
+                columns.map((column, columnIndex) => {
+                  const contents = column.header || column.name;
+
+                  const isHovered =
+                    hoveredColumn &&
+                    hoveredRowData &&
+                    isCellHovered &&
+                    isCellHovered({
+                      column,
+                      rowData: {},
+                      hoveredColumn,
+                      hoveredRowData
+                    });
+
+                  const isSelected =
+                    isCellSelected && isCellSelected({ column, rowData: {} });
+
+                  const className = classNames({
+                    [classes.cellHovered]: isHovered,
+                    [classes.cellSelected]: isSelected
+                  });
+
+                  const cellProps = merge(
+                    {},
+                    { className },
+                    resolveProp(column.cellProps, {
+                      column,
+                      rowData: {},
+                      hoveredColumn,
+                      hoveredRowData
+                    }),
+                    resolveProp(defaultCellProps, {
+                      column,
+                      rowData: {},
+                      hoveredColumn,
+                      hoveredRowData
+                    }),
+                    resolveProp(column.headerCellProps, {
+                      column,
+                      rowData: {},
+                      hoveredColumn,
+                      hoveredRowData
+                    }),
+                    resolveProp(defaultHeaderCellProps, {
+                      column,
+                      rowData: {},
+                      hoveredColumn,
+                      hoveredRowData
+                    })
+                  );
+
+                  return (
+                    <TableCell
+                      onMouseEnter={() => {
+                        this.setState({
+                          hoveredColumn: column,
+                          hoveredRowData: {}
+                        });
+                      }}
+                      onMouseLeave={() =>
+                        this.setState({
+                          hoveredColumn: null,
+                          hoveredRowData: null
+                        })
+                      }
+                      key={`header-cell-${column.name}`}
+                      {...cellProps}
+                    >
+                      {column.onHeaderClick !== false &&
+                      (column.onHeaderClick || onHeaderClick) ? (
+                        <TableSortLabel
+                          active={
+                            orderBy &&
+                            (orderBy === column.name ||
+                              orderBy === column.orderBy) &&
+                            rowIndex === 0
+                          }
+                          style={{ width: 'inherit' }} // fix text overflowing
+                          direction={orderDirection}
+                          onClick={() =>
+                            column.onHeaderClick
+                              ? column.onHeaderClick()
+                              : onHeaderClick({ column })
+                          }
+                        >
+                          {contents}
+                        </TableSortLabel>
+                      ) : (
+                        contents
+                      )}
+                    </TableCell>
+                  );
+                })}
+            </TableRow>
+          </TableHead>
+        )}
+
+        <TableBody>
+          {data &&
+            data.map((rowData, rowIndex) => {
+              return (
+                <TableRow
+                  key={`body-row-${rowIndex}`}
+                  {...rowProps}
+                  {...bodyRowProps}
+                >
+                  {columns.map((column, columnIndex) => {
+                    const contents = column.cell
+                      ? column.cell(rowData)
+                      : rowData[column.name];
+
+                    const isHovered =
+                      hoveredColumn &&
+                      hoveredRowData &&
+                      isCellHovered &&
+                      isCellHovered({
+                        column,
+                        rowData,
+                        hoveredColumn,
+                        hoveredRowData
+                      });
+
+                    const isSelected =
+                      isCellSelected && isCellSelected({ column, rowData });
+
+                    const className = classNames({
+                      [classes.cellHovered]: isHovered,
+                      [classes.cellSelected]: isSelected
+                    });
+
+                    const cellProps = merge(
+                      {},
+                      { className },
+                      resolveProp(defaultCellProps, {
+                        column,
+                        rowData,
+                        hoveredColumn,
+                        hoveredRowData
+                      }),
+                      resolveProp(column.cellProps, {
+                        column,
+                        rowData,
+                        hoveredColumn,
+                        hoveredRowData
+                      }),
+                      resolveProp(defaultBodyCellProps, {
+                        column,
+                        rowData,
+                        hoveredColumn,
+                        hoveredRowData
+                      }),
+                      resolveProp(column.bodyCellProps, {
+                        column,
+                        rowData,
+                        hoveredColumn,
+                        hoveredRowData
+                      })
+                    );
+
+                    return (
+                      <TableCell
+                        style={{
+                          ...((onCellClick || column.onClick) && {
+                            cursor: 'pointer'
+                          })
+                        }}
+                        onMouseEnter={() => {
+                          this.setState({
+                            hoveredColumn: column,
+                            hoveredRowData: rowData
+                          });
+                        }}
+                        onMouseLeave={() =>
+                          this.setState({
+                            hoveredColumn: null,
+                            hoveredRowData: null
+                          })
+                        }
+                        {...onCellClick && {
+                          onClick: () => onCellClick({ column, rowData }) // Can be overridden by cellProps.onClick on column definition
+                        }}
+                        key={`body-cell-${rowIndex}-${column.name}`}
+                        {...cellProps}
+                      >
+                        {contents}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
+
+          {/* Fill remaining space to keep pagination controls in consistent location */}
+          {pagination &&
+            addPlaceholderRows &&
+            pagination.rowsPerPage > (data ? data.length : 0) &&
+            Array.from({
+              length: pagination.rowsPerPage - (data ? data.length : 0)
+            }).map((rowData, rowIndex) => (
+              <TableRow
+                {...rowProps}
+                {...bodyRowProps}
+                key={`body-row-placeholder-${rowIndex}`}
+              >
+                {columns.map(column => (
+                  <TableCell
+                    style={{ visibility: 'hidden' }}
+                    key={`body-cell-placeholder-${rowIndex}-${column.name}`}
+                  />
+                ))}
+              </TableRow>
+            ))}
+        </TableBody>
 
         {pagination && (
-          <TableFooter component="div" className={classes.footer}>
-            <TablePagination component="div" {...pagination} />
+          <TableFooter>
+            <TableRow>
+              <TablePagination {...pagination} />
+            </TableRow>
           </TableFooter>
         )}
       </Table>
@@ -331,27 +294,24 @@ class MuiTable extends Component {
 }
 
 MuiTable.propTypes = {
-  data: PropTypes.array,
+  addPlaceholderRows: PropTypes.bool,
+  bodyCellProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+  bodyRowProps: PropTypes.object,
+  cellProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+  classes: PropTypes.object,
   columns: PropTypes.array,
-  width: PropTypes.number,
-  height: PropTypes.number,
-  maxHeight: PropTypes.number,
-  pagination: PropTypes.object,
-  fitHeightToRows: PropTypes.bool,
-  fixedRowCount: PropTypes.number,
-  fixedColumnCount: PropTypes.number,
-  rowHeight: PropTypes.number,
-  columnWidth: PropTypes.number,
+  data: PropTypes.array,
+  headerCellProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+  headerRowProps: PropTypes.object,
   includeHeaders: PropTypes.bool,
-  orderBy: PropTypes.string,
-  orderDirection: PropTypes.string,
-  onHeaderClick: PropTypes.func,
-  onCellClick: PropTypes.func,
   isCellHovered: PropTypes.func,
   isCellSelected: PropTypes.func,
-  classes: PropTypes.object,
-  cellProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
-  style: PropTypes.object
+  onCellClick: PropTypes.func,
+  onHeaderClick: PropTypes.func,
+  orderBy: PropTypes.string,
+  orderDirection: PropTypes.string,
+  pagination: PropTypes.object,
+  rowProps: PropTypes.object
 };
 
-export default withStyles(styles, { withTheme: true })(MuiTable);
+export default withStyles(styles)(MuiTable);
