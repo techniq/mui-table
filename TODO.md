@@ -1,4 +1,79 @@
+- Rewrite
+
+  - Benefits
+    - Support more layouts
+      - Use table, grid, flexbox
+      - Support columns that fit to cell contents
+      - Support colSpan (table), multiple header rows, etc
+      - Scroll to stick other rows (large scrolling pivot tables)
+      - Cleaner distintion between header and body rows/cells
+      - Remove `componentWillReceiveProps`
+  - Differences
+
+    - Table responsive by default (cells)
+    - Use `tableLayout: 'fixed'`
+    - Pass object instead of individual arguments to cellProps (and headerCellProps, rowProps, headerRowProps) and `onCellClick`, etc
+    - Support `headerCellProps` and `bodyCellProps` along with `cellProps`
+    - Remove `width` on Table props and cell definition.
+      - Table: style={{ width: 100 }}
+      - Cell definition: Use `cellProps={{ style: { width: 100 } }}` instead
+    - `fitHeightToRows` default of `display: table`. Use `addPlaceholderRows` with pagination to keep controls in consistent location.
+    - Removed default styling of fixed headers and columns (defaults to Material-UI styling)
+    - rowHeight - use `rowProps={ style: { height: 24 }}` instead
+    - `maxHeight` not supported (limitation of `display: table`). Should hopefully work with `display: grid`
+
+- TODO:
+
+  - Fix height of body being consistent regardless of rows (partial/empty/etc)
+  - Cleanup explicit widths
+  - Support maxHeight/scrolling
+  - `flex` prop to layout props using flexbox?
+    - Just pass style/classname props?
+    - Need to set `component="div"` for all Material-UI components
+  - Props
+
+    - [ ] width
+      - removed. use `style`
+    - [ ] height
+      - removed. use `style`
+    - [ ] maxHeight
+      - not currently supported (likely with `display: grid` support)
+    - [x] pagination
+    - [ ] fitHeightToRows
+      - default of `display: table`. Inverse supported with with `addPlaceholderRows`
+      - The default now?
+    - [x] fixedRowCount
+      - replaced by `stickyRow`
+      - support multiple columns (all fixed to the top)?
+      - support multiple columns (scroll off as new sticky come in)?
+    - [x] fixedColumnCount
+      - replaced by `stickyColumn`
+      - support multiple columns (all fixed to the left)?
+      - support multiple columns (scroll off as new sticky come in)?
+    - [x] rowHeight
+      - replaced by `rowProps={{ style: { height: 24 }}}
+    - [ ] columnWidth
+    - [ ] includeHeaders
+    - [x] orderBy
+    - [x] orderDirection
+    - [x] onHeaderClick
+    - [x] onCellClick
+    - [x] isCellHovered
+    - [x] isCellSelected
+    - [x] cellProps (default)
+
+  - Column properties
+    - Width
+    - onClick
+  - react-window support
+
+- performance
+- ideas:
+
+  - https://react-bootstrap-table.github.io/react-bootstrap-table2/storybook/
+
 - Table
+
   - Column widths
     - Support flexGrow / flexShink (applies to remaining width (after fixed widths, after percentage-based?))
     - Support maxWidth
