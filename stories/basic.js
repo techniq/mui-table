@@ -6,6 +6,7 @@ import { css } from 'glamor';
 
 import Checkbox from '@material-ui/core/Checkbox';
 import { createMuiTheme } from '@material-ui/core/styles';
+import { blue, orange, purple } from '@material-ui/core/colors';
 
 import MuiTable from '../src';
 import { createPersonData, createDessertData } from './data';
@@ -53,161 +54,6 @@ storiesOf('Basic', module)
         data={data}
         columns={[{ name: 'firstName' }, { name: 'lastName' }]}
         style={{ width: 300, backgroundColor: 'white' }}
-      />
-    );
-  })
-  .add('include headers', () => {
-    const data = createPersonData(5);
-    return (
-      <MuiTable
-        data={data}
-        columns={[{ name: 'firstName' }, { name: 'lastName' }]}
-        includeHeaders={true}
-        style={{ backgroundColor: 'white' }}
-      />
-    );
-  })
-  .add('custom headers', () => {
-    const data = createPersonData(5);
-    return (
-      <MuiTable
-        data={data}
-        columns={[
-          { name: 'firstName', header: 'First Name' },
-          { name: 'lastName', header: 'Last Name' }
-        ]}
-        includeHeaders={true}
-        style={{ backgroundColor: 'white' }}
-      />
-    );
-  })
-  .add('composite cells', () => {
-    const data = createPersonData(100);
-    return (
-      <MuiTable
-        data={data}
-        columns={[
-          {
-            name: 'fullName',
-            header: 'Name',
-            cell: d => `${d.firstName} ${d.lastName}`
-          },
-          { name: 'jobTitle', header: 'Job Title' },
-          { name: 'jobArea', header: 'Job Area' }
-        ]}
-        includeHeaders={true}
-        style={{ backgroundColor: 'white' }}
-      />
-    );
-  })
-  .add('sticky header row', () => {
-    const data = createPersonData(100);
-    return (
-      <MuiTable
-        data={data}
-        columns={[
-          { name: 'firstName', header: 'First Name' },
-          { name: 'lastName', header: 'Last Name' },
-          { name: 'jobTitle', header: 'Job Title' },
-          { name: 'jobArea', header: 'Job Area' }
-        ]}
-        includeHeaders={true}
-        headerCellProps={{
-          className: stickyHeaderClass.toString(),
-          style: { background: '#eee' }
-        }}
-        style={{ backgroundColor: 'white' }}
-      />
-    );
-  })
-  .add('sticky header column', () => {
-    const data = createPersonData(100);
-    return (
-      <MuiTable
-        data={data}
-        columns={[
-          {
-            name: 'fullName',
-            header: 'Name',
-            cell: d => `${d.firstName} ${d.lastName}`,
-            cellProps: { style: { width: 200 } }
-          },
-          {
-            name: 'jobTitle',
-            header: 'Job Title',
-            cellProps: { style: { width: 400 } }
-          },
-          {
-            name: 'jobArea',
-            header: 'Job Area',
-            cellProps: { style: { width: 400 } }
-          },
-          {
-            name: 'jobType',
-            header: 'Job Type',
-            cellProps: { style: { width: 400 } }
-          }
-        ]}
-        includeHeaders={true}
-        cellProps={({ column }) => {
-          if (column.name === 'fullName') {
-            return {
-              className: stickyColumnClass.toString(),
-              style: { background: '#eee' }
-            };
-          }
-        }}
-        style={{ tableLayout: 'fixed', backgroundColor: 'white' }}
-      />
-    );
-  })
-  .add('sticky header row and column', () => {
-    const data = createPersonData(100);
-    return (
-      <MuiTable
-        data={data}
-        columns={[
-          {
-            name: 'fullName',
-            header: 'Name',
-            cell: d => `${d.firstName} ${d.lastName}`,
-            cellProps: { style: { width: 200 } }
-          },
-          {
-            name: 'jobTitle',
-            header: 'Job Title',
-            cellProps: { style: { width: 400 } }
-          },
-          {
-            name: 'jobArea',
-            header: 'Job Area',
-            cellProps: { style: { width: 400 } }
-          },
-          {
-            name: 'jobType',
-            header: 'Job Type',
-            cellProps: { style: { width: 400 } }
-          }
-        ]}
-        includeHeaders={true}
-        headerCellProps={({ column }) => {
-          return {
-            className: `${stickyHeaderClass} ${stickyColumnClass}`,
-            style: {
-              background: '#eee',
-              zIndex: column.name === 'fullName' ? 1 : undefined // corner
-            }
-          };
-        }}
-        cellProps={({ column }) => {
-          if (column.name === 'fullName') {
-            return {
-              className: stickyColumnClass.toString(),
-              style: { background: '#eee' }
-            };
-          }
-        }}
-        style={{ tableLayout: 'fixed', backgroundColor: 'white' }}
       />
     );
   })
@@ -384,6 +230,244 @@ storiesOf('Basic', module)
           )
         }
         style={{ backgroundColor: 'white' }}
+      />
+    );
+  });
+
+storiesOf('Headers', module)
+  .add('include headers', () => {
+    const data = createPersonData(5);
+    return (
+      <MuiTable
+        data={data}
+        columns={[{ name: 'firstName' }, { name: 'lastName' }]}
+        includeHeaders={true}
+        style={{ backgroundColor: 'white' }}
+      />
+    );
+  })
+  .add('custom headers', () => {
+    const data = createPersonData(5);
+    return (
+      <MuiTable
+        data={data}
+        columns={[
+          { name: 'firstName', header: 'First Name' },
+          { name: 'lastName', header: 'Last Name' }
+        ]}
+        includeHeaders={true}
+        style={{ backgroundColor: 'white' }}
+      />
+    );
+  })
+  .add('grouped headers', () => {
+    const data = createPersonData(5);
+
+    return (
+      <MuiTable
+        data={data}
+        columns={[
+          {
+            name: 'Name',
+            headerCellProps: {
+              style: {
+                textAlign: 'center',
+                border: 0,
+                background: blue[500]
+              }
+            },
+            columns: [
+              {
+                name: 'firstName',
+                header: 'First Name',
+                headerCellProps: {
+                  style: {
+                    background: blue[400]
+                  }
+                }
+              },
+              {
+                name: 'lastName',
+                header: 'Last Name',
+                headerCellProps: {
+                  style: {
+                    background: blue[400]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            name: 'age',
+            header: 'Age',
+            headerCellProps: {
+              style: {
+                background: orange[500]
+              }
+            }
+          },
+          {
+            name: 'Job',
+            headerCellProps: {
+              style: { textAlign: 'center', border: 0, background: purple[500] }
+            },
+            columns: [
+              {
+                name: 'jobTitle',
+                header: 'Title',
+                headerCellProps: {
+                  style: {
+                    background: purple[400]
+                  }
+                }
+              },
+              {
+                name: 'jobArea',
+                header: 'Area',
+                headerCellProps: {
+                  style: {
+                    background: purple[400]
+                  }
+                }
+              }
+            ]
+          }
+        ]}
+        includeHeaders={true}
+        headerRowProps={{ style: { height: 24 } }}
+        headerCellProps={{ style: { border: 0, background: '#eee' } }}
+        cellProps={{ padding: 'dense' }}
+        style={{ backgroundColor: 'white' }}
+      />
+    );
+  })
+  .add('composite cells', () => {
+    const data = createPersonData(100);
+    return (
+      <MuiTable
+        data={data}
+        columns={[
+          {
+            name: 'fullName',
+            header: 'Name',
+            cell: d => `${d.firstName} ${d.lastName}`
+          },
+          { name: 'jobTitle', header: 'Job Title' },
+          { name: 'jobArea', header: 'Job Area' }
+        ]}
+        includeHeaders={true}
+        style={{ backgroundColor: 'white' }}
+      />
+    );
+  })
+  .add('sticky header row', () => {
+    const data = createPersonData(100);
+    return (
+      <MuiTable
+        data={data}
+        columns={[
+          { name: 'firstName', header: 'First Name' },
+          { name: 'lastName', header: 'Last Name' },
+          { name: 'jobTitle', header: 'Job Title' },
+          { name: 'jobArea', header: 'Job Area' }
+        ]}
+        includeHeaders={true}
+        headerCellProps={{
+          className: stickyHeaderClass.toString(),
+          style: { background: '#eee' }
+        }}
+        style={{ backgroundColor: 'white' }}
+      />
+    );
+  })
+  .add('sticky header column', () => {
+    const data = createPersonData(100);
+    return (
+      <MuiTable
+        data={data}
+        columns={[
+          {
+            name: 'fullName',
+            header: 'Name',
+            cell: d => `${d.firstName} ${d.lastName}`,
+            cellProps: { style: { width: 200 } }
+          },
+          {
+            name: 'jobTitle',
+            header: 'Job Title',
+            cellProps: { style: { width: 400 } }
+          },
+          {
+            name: 'jobArea',
+            header: 'Job Area',
+            cellProps: { style: { width: 400 } }
+          },
+          {
+            name: 'jobType',
+            header: 'Job Type',
+            cellProps: { style: { width: 400 } }
+          }
+        ]}
+        includeHeaders={true}
+        cellProps={({ column }) => {
+          if (column.name === 'fullName') {
+            return {
+              className: stickyColumnClass.toString(),
+              style: { background: '#eee' }
+            };
+          }
+        }}
+        style={{ tableLayout: 'fixed', backgroundColor: 'white' }}
+      />
+    );
+  })
+  .add('sticky header row and column', () => {
+    const data = createPersonData(100);
+    return (
+      <MuiTable
+        data={data}
+        columns={[
+          {
+            name: 'fullName',
+            header: 'Name',
+            cell: d => `${d.firstName} ${d.lastName}`,
+            cellProps: { style: { width: 200 } }
+          },
+          {
+            name: 'jobTitle',
+            header: 'Job Title',
+            cellProps: { style: { width: 400 } }
+          },
+          {
+            name: 'jobArea',
+            header: 'Job Area',
+            cellProps: { style: { width: 400 } }
+          },
+          {
+            name: 'jobType',
+            header: 'Job Type',
+            cellProps: { style: { width: 400 } }
+          }
+        ]}
+        includeHeaders={true}
+        headerCellProps={({ column }) => {
+          return {
+            className: `${stickyHeaderClass} ${stickyColumnClass}`,
+            style: {
+              background: '#eee',
+              zIndex: column.name === 'fullName' ? 1 : undefined // corner
+            }
+          };
+        }}
+        cellProps={({ column }) => {
+          if (column.name === 'fullName') {
+            return {
+              className: stickyColumnClass.toString(),
+              style: { background: '#eee' }
+            };
+          }
+        }}
+        style={{ tableLayout: 'fixed', backgroundColor: 'white' }}
       />
     );
   });
