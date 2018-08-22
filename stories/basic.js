@@ -488,7 +488,7 @@ storiesOf('Pagination', module)
           { name: 'jobArea', header: 'Job Area' }
         ]}
         includeHeaders={true}
-        style={{ backgroundColor: 'white' }}
+        containerProps={{ style: { backgroundColor: 'white' } }}
       />
     );
   })
@@ -508,7 +508,7 @@ storiesOf('Pagination', module)
         ]}
         addPlaceholderRows
         includeHeaders={true}
-        style={{ backgroundColor: 'white' }}
+        containerProps={{ style: { backgroundColor: 'white' } }}
       />
     );
   })
@@ -519,7 +519,27 @@ storiesOf('Pagination', module)
         columns={[{ name: 'firstName' }, { name: 'lastName' }]}
         addPlaceholderRows
         includeHeaders
-        style={{ backgroundColor: 'white' }}
+        containerProps={{ style: { backgroundColor: 'white' } }}
+      />
+    );
+  })
+  .add('overflow', () => {
+    const data = createPersonData(13);
+    return (
+      <PaginatedTable
+        data={data}
+        columns={[
+          {
+            name: 'fullName',
+            header: 'Name',
+            cell: d => `${d.firstName} ${d.lastName}`
+          },
+          { name: 'jobTitle', header: 'Job Title' },
+          { name: 'jobArea', header: 'Job Area' }
+        ]}
+        includeHeaders={true}
+        style={{ minWidth: 1000 }}
+        containerProps={{ style: { backgroundColor: 'white' } }}
       />
     );
   });
