@@ -146,8 +146,7 @@ class MuiTable extends Component {
                             active={
                               orderBy &&
                               (orderBy === column.name ||
-                                orderBy === column.orderBy) &&
-                              rowIndex === 0
+                                orderBy === column.orderBy)
                             }
                             style={{ width: 'inherit' }} // fix text overflowing
                             direction={orderDirection}

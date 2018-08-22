@@ -1217,86 +1217,141 @@ storiesOf('Examples', module)
   .add('dessert', () => {
     const data = createDessertData();
     return (
-      <PaginatedTable
-        data={data}
-        columns={[
-          {
-            name: 'name',
-            header: 'Dessert (100g serving)',
-            width: 200,
-            cellProps: { style: { paddingRight: 0 } }
-          },
-          {
-            name: 'calories',
-            header: 'Calories',
-            cellProps: { numeric: true }
-          },
-          {
-            name: 'fat',
-            header: 'Fat (g)',
-            cellProps: { numeric: true }
-          },
-          {
-            name: 'carbs',
-            header: 'Carbs (g)',
-            cellProps: { numeric: true }
-          },
-          {
-            name: 'protein',
-            header: 'Protein (g)',
-            cellProps: { numeric: true }
-          }
-        ]}
-        includeHeaders={true}
-        defaultPagination={{ rowsPerPage: 5 }}
-        style={{ backgroundColor: 'white' }}
-      />
+      <Component initialState={{ orderBy: 'name', orderDirection: 'asc' }}>
+        {({ state, setState }) => (
+          <PaginatedTable
+            data={data.sort((a, b) => {
+              if (a[state.orderBy] < b[state.orderBy]) {
+                return state.orderDirection === 'asc' ? -1 : 1;
+              } else if (a[state.orderBy] > b[state.orderBy]) {
+                return state.orderDirection === 'asc' ? 1 : -1;
+              } else {
+                return 0;
+              }
+            })}
+            columns={[
+              {
+                name: 'name',
+                header: 'Dessert (100g serving)',
+                width: 200,
+                cellProps: { style: { paddingRight: 0 } }
+              },
+              {
+                name: 'calories',
+                header: 'Calories',
+                cellProps: { numeric: true }
+              },
+              {
+                name: 'fat',
+                header: 'Fat (g)',
+                cellProps: { numeric: true }
+              },
+              {
+                name: 'carbs',
+                header: 'Carbs (g)',
+                cellProps: { numeric: true }
+              },
+              {
+                name: 'protein',
+                header: 'Protein (g)',
+                cellProps: { numeric: true }
+              }
+            ]}
+            includeHeaders={true}
+            onHeaderClick={({ column }) =>
+              setState(prevState => {
+                const orderBy = column.orderBy || column.name;
+                if (prevState.orderBy === orderBy) {
+                  return {
+                    orderDirection:
+                      prevState.orderDirection === 'asc' ? 'desc' : 'asc'
+                  };
+                } else {
+                  return { orderBy, orderDirection: 'asc' };
+                }
+              })
+            }
+            orderBy={state.orderBy}
+            orderDirection={state.orderDirection}
+            defaultPagination={{ rowsPerPage: 5 }}
+            style={{ backgroundColor: 'white' }}
+          />
+        )}
+      </Component>
     );
   })
   .add('all the things', () => {
     const data = createPersonData(100);
     return (
-      <PaginatedTable
-        data={data}
-        columns={[
-          {
-            name: 'fullName',
-            header: 'Name',
-            width: 180,
-            cell: d => `${d.firstName} ${d.lastName}`
-          },
-          { name: 'jobTitle', header: 'Job Title', width: 400 },
-          { name: 'jobArea', header: 'Job Area', width: 400 },
-          { name: 'jobType', header: 'Job Type', width: 400 }
-        ]}
-        includeHeaders={true}
-        headerRowProps={{
-          style: {
-            // backgroundColor: '#eee',
-            // borderBottom: '2px solid rgba(0, 0, 0, 0.12)',
-            height: 24
-          }
-        }}
-        headerCellProps={({ column }) => ({
-          className: `${stickyHeaderClass} ${stickyColumnClass}`,
-          style: {
-            backgroundColor: '#eee',
-            zIndex: column.name === 'fullName' ? 1 : undefined // corner
-          }
-        })}
-        cellProps={({ column }) => {
-          if (column.name === 'fullName') {
-            return {
-              className: stickyColumnClass.toString(),
+      <Component initialState={{ orderBy: 'lastName', orderDirection: 'asc' }}>
+        {({ state, setState }) => (
+          <PaginatedTable
+            data={data.sort((a, b) => {
+              if (a[state.orderBy] < b[state.orderBy]) {
+                return state.orderDirection === 'asc' ? -1 : 1;
+              } else if (a[state.orderBy] > b[state.orderBy]) {
+                return state.orderDirection === 'asc' ? 1 : -1;
+              } else {
+                return 0;
+              }
+            })}
+            columns={[
+              {
+                name: 'fullName',
+                header: 'Name',
+                orderBy: 'lastName',
+                width: 180,
+                cell: d => `${d.firstName} ${d.lastName}`
+              },
+              { name: 'jobTitle', header: 'Job Title', width: 400 },
+              { name: 'jobArea', header: 'Job Area', width: 400 },
+              { name: 'jobType', header: 'Job Type', width: 400 }
+            ]}
+            includeHeaders={true}
+            onHeaderClick={({ column }) =>
+              setState(prevState => {
+                const orderBy = column.orderBy || column.name;
+                if (prevState.orderBy === orderBy) {
+                  return {
+                    orderDirection:
+                      prevState.orderDirection === 'asc' ? 'desc' : 'asc'
+                  };
+                } else {
+                  return { orderBy, orderDirection: 'asc' };
+                }
+              })
+            }
+            orderBy={state.orderBy}
+            orderDirection={state.orderDirection}
+            headerRowProps={{
+              style: {
+                // backgroundColor: '#eee',
+                // borderBottom: '2px solid rgba(0, 0, 0, 0.12)',
+                height: 24
+              }
+            }}
+            headerCellProps={({ column }) => ({
+              className: `${stickyHeaderClass} ${stickyColumnClass}`,
               style: {
                 backgroundColor: '#eee',
-                borderRight: '2px solid rgba(0, 0, 0, 0.12)'
+                zIndex: column.name === 'fullName' ? 1 : undefined // corner
               }
-            };
-          }
-        }}
-        style={{ backgroundColor: 'white' }}
-      />
+            })}
+            cellProps={({ column }) => {
+              if (column.name === 'fullName') {
+                return {
+                  className: stickyColumnClass.toString(),
+                  style: {
+                    backgroundColor: '#eee',
+                    borderRight: '2px solid rgba(0, 0, 0, 0.12)'
+                  }
+                };
+              }
+            }}
+            style={{ backgroundColor: 'white' }}
+          />
+        )}
+      </Component>
     );
   });
 
