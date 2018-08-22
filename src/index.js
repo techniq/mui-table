@@ -67,8 +67,12 @@ class MuiTable extends Component {
       <Table {...props}>
         {includeHeaders && (
           <TableHead>
-            {getHeaders(columns).map(headerRow => (
-              <TableRow {...rowProps} {...headerRowProps}>
+            {getHeaders(columns).map((headerRow, headerRowIndex) => (
+              <TableRow
+                {...rowProps}
+                {...headerRowProps}
+                key={`header-row-${headerRowIndex}`}
+              >
                 {headerRow &&
                   headerRow.map((column, columnIndex) => {
                     const contents = column.header || column.name;
