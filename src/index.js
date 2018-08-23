@@ -43,6 +43,11 @@ class MuiTable extends Component {
       data,
       columns,
 
+      containerProps,
+      tableWrapperProps,
+      headerProps,
+      bodyProps,
+
       rowProps,
       headerRowProps,
       bodyRowProps,
@@ -60,8 +65,6 @@ class MuiTable extends Component {
       addPlaceholderRows,
       orderBy,
       orderDirection,
-      containerProps,
-      tableWrapperProps,
 
       classes,
       ...props
@@ -74,7 +77,7 @@ class MuiTable extends Component {
         <div className={classes.tableWrapper} {...tableWrapperProps}>
           <Table {...props}>
             {includeHeaders && (
-              <TableHead>
+              <TableHead {...headerProps}>
                 {getHeaders(columns).map((headerRow, headerRowIndex) => (
                   <TableRow
                     {...rowProps}
@@ -182,7 +185,7 @@ class MuiTable extends Component {
               </TableHead>
             )}
 
-            <TableBody>
+            <TableBody {...bodyProps}>
               {data &&
                 data.map((rowData, rowIndex) => {
                   return (
@@ -326,7 +329,9 @@ MuiTable.propTypes = {
   orderDirection: PropTypes.string,
   pagination: PropTypes.object,
   rowProps: PropTypes.object,
-  tableWrapperProps: PropTypes.object
+  tableWrapperProps: PropTypes.object,
+  headerProps: PropTypes.object,
+  bodyProps: PropTypes.object
 };
 
 export default withStyles(styles)(MuiTable);
