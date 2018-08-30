@@ -538,7 +538,8 @@ storiesOf('Pagination', module)
           { name: 'jobArea', header: 'Job Area' }
         ]}
         includeHeaders={true}
-        style={{ minWidth: 1000 }}
+        style={{ minWidth: '150vw' }}
+        tableWrapperProps={{ style: { overflowX: 'auto' } }}
         containerProps={{ style: { backgroundColor: 'white' } }}
       />
     );

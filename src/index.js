@@ -21,9 +21,7 @@ const resolveProp = (prop, args) => {
 
 export const styles = theme => ({
   container: {},
-  tableWrapper: {
-    overflowX: 'auto'
-  },
+  tableWrapper: {},
   cellSelected: {
     backgroundColor: theme.palette.grey[100]
   },
