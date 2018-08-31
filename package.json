@@ -10,8 +10,8 @@
   "author": "Sean Lynch <techniq35@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
-    "@material-ui/core": "^1.0.0",
-    "react": ">=15"
+    "@material-ui/core": "^3.0.0",
+    "react": ">=16.4.0"
   },
   "dependencies": {
     "classnames": "^2.2.6",
@@ -19,7 +19,7 @@
     "prop-types": "^15.6.2"
   },
   "devDependencies": {
-    "@material-ui/core": "^1.5.1",
+    "@material-ui/core": "^3.0.0",
     "@reactions/component": "^2.0.2",
     "@storybook/react": "^3.4.10",
     "babel-cli": "^6.26.0",
