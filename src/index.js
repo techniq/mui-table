@@ -137,18 +137,19 @@ class MuiTable extends Component {
 
                         return (
                           <TableCell
-                            onMouseEnter={() => {
-                              this.setState({
-                                hoveredColumn: column,
-                                hoveredRowData: {}
-                              });
+                            {...isCellHovered && {
+                              onMouseEnter: () => {
+                                this.setState({
+                                  hoveredColumn: column,
+                                  hoveredRowData: {}
+                                });
+                              },
+                              onMouseLeave: () =>
+                                this.setState({
+                                  hoveredColumn: null,
+                                  hoveredRowData: null
+                                })
                             }}
-                            onMouseLeave={() =>
-                              this.setState({
-                                hoveredColumn: null,
-                                hoveredRowData: null
-                              })
-                            }
                             key={`header-cell-${column.name}`}
                             colSpan={column.colSpan}
                             rowSpan={column.rowSpan}
@@ -252,18 +253,19 @@ class MuiTable extends Component {
                                 cursor: 'pointer'
                               })
                             }}
-                            onMouseEnter={() => {
-                              this.setState({
-                                hoveredColumn: column,
-                                hoveredRowData: rowData
-                              });
+                            {...isCellHovered && {
+                              onMouseEnter: () => {
+                                this.setState({
+                                  hoveredColumn: column,
+                                  hoveredRowData: rowData
+                                });
+                              },
+                              onMouseLeave: () =>
+                                this.setState({
+                                  hoveredColumn: null,
+                                  hoveredRowData: null
+                                })
                             }}
-                            onMouseLeave={() =>
-                              this.setState({
-                                hoveredColumn: null,
-                                hoveredRowData: null
-                              })
-                            }
                             {...onCellClick && {
                               onClick: () => onCellClick({ column, rowData }) // Can be overridden by cellProps.onClick on column definition
                             }}
