@@ -1,6 +1,6 @@
 {
   "name": "mui-table",
-  "version": "2.1.6",
+  "version": "2.2.0",
   "description": "Improved Material-UI table",
   "main": "dist/index.js",
   "files": [
