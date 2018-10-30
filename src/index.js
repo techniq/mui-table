@@ -78,8 +78,18 @@ class MuiTable extends Component {
               <TableHead {...headerProps}>
                 {getHeaders(columns).map((headerRow, headerRowIndex) => (
                   <TableRow
-                    {...rowProps}
-                    {...headerRowProps}
+                    {...resolveProp(rowProps, {
+                      column: {},
+                      rowData: {},
+                      hoveredColumn,
+                      hoveredRowData
+                    })}
+                    {...resolveProp(headerRowProps, {
+                      column: {},
+                      rowData: {},
+                      hoveredColumn,
+                      hoveredRowData
+                    })}
                     key={`header-row-${headerRowIndex}`}
                   >
                     {headerRow &&
@@ -190,8 +200,18 @@ class MuiTable extends Component {
                   return (
                     <TableRow
                       key={`body-row-${rowIndex}`}
-                      {...rowProps}
-                      {...bodyRowProps}
+                      {...resolveProp(rowProps, {
+                        column: {},
+                        rowData,
+                        hoveredColumn,
+                        hoveredRowData
+                      })}
+                      {...resolveProp(bodyRowProps, {
+                        column: {},
+                        rowData,
+                        hoveredColumn,
+                        hoveredRowData
+                      })}
                     >
                       {getColumns(columns).map((column, columnIndex) => {
                         const contents = column.cell
@@ -288,8 +308,18 @@ class MuiTable extends Component {
                   length: pagination.rowsPerPage - (data ? data.length : 0)
                 }).map((rowData, rowIndex) => (
                   <TableRow
-                    {...rowProps}
-                    {...bodyRowProps}
+                    {...resolveProp(rowProps, {
+                      column: {},
+                      rowData,
+                      hoveredColumn,
+                      hoveredRowData
+                    })}
+                    {...resolveProp(bodyRowProps, {
+                      column: {},
+                      rowData,
+                      hoveredColumn,
+                      hoveredRowData
+                    })}
                     key={`body-row-placeholder-${rowIndex}`}
                   >
                     {columns.map(column => (
@@ -312,14 +342,14 @@ class MuiTable extends Component {
 MuiTable.propTypes = {
   addPlaceholderRows: PropTypes.bool,
   bodyCellProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
-  bodyRowProps: PropTypes.object,
+  bodyRowProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
   cellProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
   classes: PropTypes.object,
   columns: PropTypes.array,
   containerProps: PropTypes.object,
   data: PropTypes.array,
   headerCellProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
-  headerRowProps: PropTypes.object,
+  headerRowProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
   includeHeaders: PropTypes.bool,
   isCellHovered: PropTypes.func,
   isCellSelected: PropTypes.func,
@@ -328,7 +358,7 @@ MuiTable.propTypes = {
   orderBy: PropTypes.string,
   orderDirection: PropTypes.string,
   pagination: PropTypes.object,
-  rowProps: PropTypes.object,
+  rowProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
   tableWrapperProps: PropTypes.object,
   headerProps: PropTypes.object,
   bodyProps: PropTypes.object
