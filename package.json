@@ -3,8 +3,10 @@
   "version": "2.2.0",
   "description": "Improved Material-UI table",
   "main": "dist/index.js",
+  "types": "index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "index.d.ts"
   ],
   "repository": "https://github.com/techniq/mui-table",
   "author": "Sean Lynch <techniq35@gmail.com>",
