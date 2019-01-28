@@ -4,38 +4,38 @@ declare module 'mui-table' {
   import { TableRowProps } from '@material-ui/core/TableRow';
   import { TableCellProps } from '@material-ui/core/TableCell';
 
-  export interface ColumnDef {
+  export interface ColumnDef<T> {
     name: string;
     header?: string | React.ReactNode;
-    cell?: (data: any) => React.ReactNode;
+    cell?: (data: T) => React.ReactNode;
     cellProps?:
       | TableCellProps
-      | ((obj: { rowData: any }) => TableCellProps | void);
+      | ((obj: { rowData: T }) => TableCellProps | void);
     onHeaderClick?: boolean;
     headerCellProps?: TableCellProps;
     orderBy?: string;
-    columns?: ColumnDef[];
+    columns?: ColumnDef<T>[];
   }
 
-  export interface MuiTableProps {
-    data: any;
+  export interface MuiTableProps<T> {
+    data: T[];
     includeHeaders?: boolean;
     headerProps?: TableCellProps;
     rowProps?: TableRowProps;
     bodyRowProps?:
       | TableRowProps
-      | ((obj: { rowData: any }) => TableRowProps | void);
+      | ((obj: { rowData: T }) => TableRowProps | void);
     cellProps?:
       | TableCellProps
-      | ((obj: { rowData: any }) => TableCellProps | void);
-    onHeaderClick?: (obj: { column: ColumnDef }) => void;
-    onCellClick?: (obj: { rowData: any; column: ColumnDef }) => void;
-    columns: ColumnDef[];
+      | ((obj: { rowData: T }) => TableCellProps | void);
+    onHeaderClick?: (obj: { column: ColumnDef<T> }) => void;
+    onCellClick?: (obj: { rowData: T; column: ColumnDef<T> }) => void;
+    columns: ColumnDef<T>[];
     orderBy?: string;
     orderDirection?: string;
     pagination?: {};
     addPlaceholderRows?: boolean;
     tableWrapperProps?: React.HTMLAttributes<HTMLDivElement>;
   }
-  export default class MuiTable extends React.Component<MuiTableProps> {}
+  export default class MuiTable<T> extends React.Component<MuiTableProps<T>> {}
 }
