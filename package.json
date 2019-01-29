@@ -32,6 +32,7 @@
     "@storybook/react": "^3.4.10",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^23.4.2",
+    "faker": "^4.1.0",
     "gh-pages": "^1.2.0",
     "jest": "^23.5.0",
     "react": "^16.4.2",
@@ -42,9 +43,9 @@
     "test-watch": "jest --watch",
     "build": "NODE_ENV=production babel src -d dist",
     "storybook": "start-storybook -p 9009 -c stories",
-    "build-docs": "cd stories && yarn install && cd .. && build-storybook -c stories -o docs",
+    "build-docs": "build-storybook -c stories -o docs",
     "deploy-docs": "gh-pages -d docs",
-    "preversion": "yarn build",
-    "postpublish": "yarn build-docs && yarn deploy-docs"
+    "preversion": "npm build",
+    "_postpublish": "npm run build-docs && npm run deploy-docs"
   }
 }
