@@ -11,7 +11,11 @@ import { blue, orange, purple } from '@material-ui/core/colors';
 import MuiTable from '../src';
 import { createPersonData, createDessertData } from './data';
 
-const theme = createMuiTheme();
+const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
+});
 
 const hoveredRowClass = css({
   ':hover': {
