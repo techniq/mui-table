@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import merge from 'lodash.merge';
 
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -13,7 +12,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 
-import { getHeaders, getColumns } from './utils';
+import { getHeaders, getColumns, merge } from './utils';
 
 const resolveProp = (prop, args) => {
   return typeof prop === 'function' ? prop(args) : prop;

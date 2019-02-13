@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getDepth, getWidth, getHeaders, getColumns } from './utils';
+import { getDepth, getWidth, getHeaders, getColumns, isNil, merge } from './utils';
 
 describe('getDepth', () => {
   it('flat', () => {
@@ -264,6 +264,64 @@ describe('getColumns', () => {
     // columns.forEach(column => setColumns(actual, column));
     const actual = getColumns(columns);
     expect(actual.length).toBe(6);
+    expect(actual).toMatchObject(expected);
+  });
+});
+
+describe('isNil', () => {
+  it('should be true for null and undefined values, false otherwise', () => {
+    
+    expect(isNil(null)).toBe(true);
+    expect(isNil(undefined)).toBe(true);
+    expect(isNil({})).toBe(false);
+    expect(isNil(1)).toBe(false);
+    expect(isNil(true)).toBe(false);
+    expect(isNil(false)).toBe(false);
+  });
+});
+
+describe('merge', () => {
+  it('should merge all passed sources', () => {
+    const actual = merge(
+      {},
+      { className: 'myClass' },
+      {
+        nested: {
+          prop1: 1,
+          prop2: [1, 2],
+        },
+        deep_nested: {
+          prop1: { id: 1, value: 'value' },
+        }
+      },
+      {
+        nested: {
+          prop1: 2,
+          prop2: [3, 4],
+        },
+        deep_nested: {
+          prop1: { id: 2, value: 'value', extra: 'extra' },
+        },
+        extraProp: {
+          id: 3,
+        },
+      },
+    );
+
+    const expected = {
+      className: 'myClass',
+      nested: {
+        prop1: 2,
+        prop2: [1, 2, 3, 4],
+      },
+      deep_nested: {
+        prop1: { id: 2, value: 'value', extra: 'extra' },
+      },
+      extraProp: {
+        id: 3,
+      },
+    };
+  
     expect(actual).toMatchObject(expected);
   });
 });

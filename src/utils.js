@@ -1,3 +1,5 @@
+import * as deepmerge from 'deepmerge';
+
 export function getHeaders(columns) {
   const maxDepth = getDepth(columns, 'columns');
   const result = Array.from({ length: maxDepth }).map(i => []);
@@ -67,4 +69,17 @@ export function getWidth(item, childProp) {
   });
 
   return width;
+}
+
+export function isNil(obj) {
+  return obj == null;
+}
+
+export function merge(...objects) {
+  const [firstObj] = objects;
+  const destination = isNil(firstObj) ? {} : firstObj;
+  const existingObjects = objects.filter(source => !isNil(source));
+  const sources = [destination].concat(existingObjects);
+  
+  return deepmerge.all(sources);
 }
