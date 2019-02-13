@@ -71,22 +71,22 @@ storiesOf('Basic', module)
           {
             name: 'calories',
             header: 'Calories',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           },
           {
             name: 'fat',
             header: 'Fat (g)',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           },
           {
             name: 'carbs',
             header: 'Carbs (g)',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           },
           {
             name: 'protein',
             header: 'Protein (g)',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           }
         ]}
         includeHeaders={true}
@@ -109,14 +109,14 @@ storiesOf('Basic', module)
           {
             name: 'calories',
             header: 'Calories',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           },
-          { name: 'fat', header: 'Fat (g)', cellProps: { numeric: true } },
-          { name: 'carbs', header: 'Carbs (g)', cellProps: { numeric: true } },
+          { name: 'fat', header: 'Fat (g)', cellProps: { align: 'right' } },
+          { name: 'carbs', header: 'Carbs (g)', cellProps: { align: 'right' } },
           {
             name: 'protein',
             header: 'Protein (g)',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           }
         ]}
         includeHeaders={true}
@@ -139,14 +139,14 @@ storiesOf('Basic', module)
           {
             name: 'calories',
             header: 'Calories',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           },
-          { name: 'fat', header: 'Fat (g)', cellProps: { numeric: true } },
-          { name: 'carbs', header: 'Carbs (g)', cellProps: { numeric: true } },
+          { name: 'fat', header: 'Fat (g)', cellProps: { align: 'right' } },
+          { name: 'carbs', header: 'Carbs (g)', cellProps: { align: 'right' } },
           {
             name: 'protein',
             header: 'Protein (g)',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           }
         ]}
         includeHeaders={true}
@@ -855,14 +855,14 @@ storiesOf('Hover', module)
           {
             name: 'calories',
             header: 'Calories',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           },
-          { name: 'fat', header: 'Fat (g)', cellProps: { numeric: true } },
-          { name: 'carbs', header: 'Carbs (g)', cellProps: { numeric: true } },
+          { name: 'fat', header: 'Fat (g)', cellProps: { align: 'right' } },
+          { name: 'carbs', header: 'Carbs (g)', cellProps: { align: 'right' } },
           {
             name: 'protein',
             header: 'Protein (g)',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           }
         ]}
         rowProps={{
@@ -887,14 +887,14 @@ storiesOf('Hover', module)
           {
             name: 'calories',
             header: 'Calories',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           },
-          { name: 'fat', header: 'Fat (g)', cellProps: { numeric: true } },
-          { name: 'carbs', header: 'Carbs (g)', cellProps: { numeric: true } },
+          { name: 'fat', header: 'Fat (g)', cellProps: { align: 'right' } },
+          { name: 'carbs', header: 'Carbs (g)', cellProps: { align: 'right' } },
           {
             name: 'protein',
             header: 'Protein (g)',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           }
         ]}
         isCellHovered={({ rowData, hoveredRowData }) =>
@@ -919,14 +919,14 @@ storiesOf('Hover', module)
           {
             name: 'calories',
             header: 'Calories',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           },
-          { name: 'fat', header: 'Fat (g)', cellProps: { numeric: true } },
-          { name: 'carbs', header: 'Carbs (g)', cellProps: { numeric: true } },
+          { name: 'fat', header: 'Fat (g)', cellProps: { align: 'right' } },
+          { name: 'carbs', header: 'Carbs (g)', cellProps: { align: 'right' } },
           {
             name: 'protein',
             header: 'Protein (g)',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           }
         ]}
         isCellHovered={({ column, hoveredColumn }) =>
@@ -951,14 +951,14 @@ storiesOf('Hover', module)
           {
             name: 'calories',
             header: 'Calories',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           },
-          { name: 'fat', header: 'Fat (g)', cellProps: { numeric: true } },
-          { name: 'carbs', header: 'Carbs (g)', cellProps: { numeric: true } },
+          { name: 'fat', header: 'Fat (g)', cellProps: { align: 'right' } },
+          { name: 'carbs', header: 'Carbs (g)', cellProps: { align: 'right' } },
           {
             name: 'protein',
             header: 'Protein (g)',
-            cellProps: { numeric: true }
+            cellProps: { align: 'right' }
           }
         ]}
         isCellHovered={({ column, rowData, hoveredColumn, hoveredRowData }) =>
@@ -988,18 +988,18 @@ storiesOf('Selected', module)
               {
                 name: 'calories',
                 header: 'Calories',
-                cellProps: { numeric: true }
+                cellProps: { align: 'right' }
               },
-              { name: 'fat', header: 'Fat (g)', cellProps: { numeric: true } },
+              { name: 'fat', header: 'Fat (g)', cellProps: { align: 'right' } },
               {
                 name: 'carbs',
                 header: 'Carbs (g)',
-                cellProps: { numeric: true }
+                cellProps: { align: 'right' }
               },
               {
                 name: 'protein',
                 header: 'Protein (g)',
-                cellProps: { numeric: true }
+                cellProps: { align: 'right' }
               }
             ]}
             isCellSelected={({ rowData }) =>
@@ -1045,18 +1045,18 @@ storiesOf('Selected', module)
               {
                 name: 'calories',
                 header: 'Calories',
-                cellProps: { numeric: true }
+                cellProps: { align: 'right' }
               },
-              { name: 'fat', header: 'Fat (g)', cellProps: { numeric: true } },
+              { name: 'fat', header: 'Fat (g)', cellProps: { align: 'right' } },
               {
                 name: 'carbs',
                 header: 'Carbs (g)',
-                cellProps: { numeric: true }
+                cellProps: { align: 'right' }
               },
               {
                 name: 'protein',
                 header: 'Protein (g)',
-                cellProps: { numeric: true }
+                cellProps: { align: 'right' }
               }
             ]}
             isCellSelected={({ rowData }) =>
@@ -1136,18 +1136,18 @@ storiesOf('Selected', module)
               {
                 name: 'calories',
                 header: 'Calories',
-                cellProps: { numeric: true }
+                cellProps: { align: 'right' }
               },
-              { name: 'fat', header: 'Fat (g)', cellProps: { numeric: true } },
+              { name: 'fat', header: 'Fat (g)', cellProps: { align: 'right' } },
               {
                 name: 'carbs',
                 header: 'Carbs (g)',
-                cellProps: { numeric: true }
+                cellProps: { align: 'right' }
               },
               {
                 name: 'protein',
                 header: 'Protein (g)',
-                cellProps: { numeric: true }
+                cellProps: { align: 'right' }
               }
             ]}
             isCellSelected={({ rowData }) =>
@@ -1260,22 +1260,22 @@ storiesOf('Examples', module)
               {
                 name: 'calories',
                 header: 'Calories',
-                cellProps: { numeric: true }
+                cellProps: { align: 'right' }
               },
               {
                 name: 'fat',
                 header: 'Fat (g)',
-                cellProps: { numeric: true }
+                cellProps: { align: 'right' }
               },
               {
                 name: 'carbs',
                 header: 'Carbs (g)',
-                cellProps: { numeric: true }
+                cellProps: { align: 'right' }
               },
               {
                 name: 'protein',
                 header: 'Protein (g)',
-                cellProps: { numeric: true }
+                cellProps: { align: 'right' }
               }
             ]}
             includeHeaders={true}
