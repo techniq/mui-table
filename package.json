@@ -45,7 +45,7 @@
     "storybook": "start-storybook -p 9009 -c stories",
     "build-docs": "build-storybook -c stories -o docs",
     "deploy-docs": "gh-pages -d docs",
-    "preversion": "npm build",
-    "_postpublish": "npm run build-docs && npm run deploy-docs"
+    "preversion": "npm run build",
+    "postpublish": "npm run build-docs && npm run deploy-docs"
   }
 }
