@@ -1,3 +1,5 @@
+import { TableProps } from '@material-ui/core/Table';
+
 declare module 'mui-table' {
   import React from 'react';
   import { TableBodyProps } from '@material-ui/core/TableBody';
@@ -18,7 +20,7 @@ declare module 'mui-table' {
     columns?: ColumnDef<T>[];
   }
 
-  export interface MuiTableProps<T = any> {
+  export interface MuiTableProps<T = any> extends TableProps {
     data: T[];
     bodyProps?: TableBodyProps;
     containerProps?: any;
