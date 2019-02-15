@@ -1,7 +1,6 @@
-import { TableProps } from '@material-ui/core/Table';
-
 declare module 'mui-table' {
   import React from 'react';
+  import { TableProps } from '@material-ui/core/Table';
   import { TableBodyProps } from '@material-ui/core/TableBody';
   import { TablePaginationProps } from '@material-ui/core/TablePagination';
   import { TableRowProps } from '@material-ui/core/TableRow';
@@ -64,5 +63,7 @@ declare module 'mui-table' {
       cellSelected?: string;
     };
   }
-  export default class MuiTable<T> extends React.Component<MuiTableProps<T>> {}
+  export default class MuiTable<T = any> extends React.Component<
+    MuiTableProps<T>
+  > {}
 }
