@@ -1,4 +1,3 @@
-
 declare module 'mui-table' {
   import React from 'react';
   import { TableBodyProps } from '@material-ui/core/TableBody';
@@ -25,9 +24,7 @@ declare module 'mui-table' {
     containerProps?: any;
     includeHeaders?: boolean;
     headerProps?: TableCellProps;
-    rowProps?:
-      | TableRowProps
-      | ((obj: { rowData: T }) => TableRowProps | void);
+    rowProps?: TableRowProps | ((obj: { rowData: T }) => TableRowProps | void);
     bodyRowProps?:
       | TableRowProps
       | ((obj: { rowData: T }) => TableRowProps | void);
@@ -51,9 +48,19 @@ declare module 'mui-table' {
     headerRowProps?:
       | TableRowProps
       | ((obj: { rowData: T }) => TableRowProps | void);
-    isCellHovered?: (obj: { column: string; rowData: T; hoveredColumn: string; hoveredRowData: T; }) => void;
-    isCellSelected?: (obj: { column: string; rowData: T; }) => void;
-    classes?: { container?: string; tableWrapper?: string; cellHovered?: string; cellSelected?: string; };
+    isCellHovered?: (obj: {
+      column: ColumnDef<T>;
+      rowData: T;
+      hoveredColumn: ColumnDef<T>;
+      hoveredRowData: T;
+    }) => boolean;
+    isCellSelected?: (obj: { column: ColumnDef<T>; rowData: T }) => boolean;
+    classes?: {
+      container?: string;
+      tableWrapper?: string;
+      cellHovered?: string;
+      cellSelected?: string;
+    };
   }
   export default class MuiTable<T> extends React.Component<MuiTableProps<T>> {}
 }
