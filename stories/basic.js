@@ -514,6 +514,31 @@ storiesOf('Pagination', module)
       />
     );
   })
+  .add('addPlaceholderRows with cell styles', () => {
+    const data = createPersonData(13);
+    return (
+      <PaginatedTable
+        data={data}
+        columns={[
+          {
+            name: 'fullName',
+            header: 'Name',
+            cell: d => `${d.firstName} ${d.lastName}`
+          },
+          { name: 'jobTitle', header: 'Job Title' },
+          { name: 'jobArea', header: 'Job Area' }
+        ]}
+        addPlaceholderRows
+        includeHeaders
+        cellProps={{
+          style: {
+            padding: 4
+          }
+        }}
+        containerProps={{ style: { backgroundColor: 'white' } }}
+      />
+    );
+  })
   .add('addPlaceholderRows and empty data', () => {
     return (
       <PaginatedTable

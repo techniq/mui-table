@@ -349,13 +349,18 @@ function MuiTable(props) {
                       })
                     );
 
+                    cellProps.style = {
+                      ...cellProps.style,
+                      visibility: 'hidden'
+                    };
+
                     return (
                       <TableCell
                         style={{ visibility: 'hidden' }}
                         key={`body-cell-placeholder-${rowIndex}-${column.name}`}
                         {...cellProps}
                       >
-                        ' '
+                        &nbsp;
                       </TableCell>
                     );
                   })}
