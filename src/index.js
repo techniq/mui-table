@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -18,7 +18,7 @@ const resolveProp = (prop, args) => {
   return typeof prop === 'function' ? prop(args) : prop;
 };
 
-export const styles = theme => ({
+export const useStyles = makeStyles(theme => ({
   container: {},
   tableWrapper: {},
   cellSelected: {
@@ -27,286 +27,177 @@ export const styles = theme => ({
   cellHovered: {
     backgroundColor: theme.palette.grey[200]
   }
-});
+}));
 
-class MuiTable extends Component {
-  state = {
+function MuiTable(props) {
+  const {
+    data,
+    columns,
+
+    containerProps,
+    tableWrapperProps,
+    headerProps,
+    bodyProps,
+
+    rowProps,
+    headerRowProps,
+    bodyRowProps,
+
+    cellProps: defaultCellProps,
+    headerCellProps: defaultHeaderCellProps,
+    bodyCellProps: defaultBodyCellProps,
+
+    includeHeaders,
+    onHeaderClick,
+    onCellClick,
+    isCellHovered,
+    isCellSelected,
+    pagination,
+    addPlaceholderRows,
+    orderBy,
+    orderDirection,
+
+    ...tableProps
+  } = props;
+
+  const [state, setState] = useState({
     hoveredColumn: null,
     hoveredRowData: null
-  };
+  });
+  const classes = useStyles();
 
-  render() {
-    const {
-      data,
-      columns,
+  const { hoveredColumn, hoveredRowData } = state;
 
-      containerProps,
-      tableWrapperProps,
-      headerProps,
-      bodyProps,
+  return (
+    <div className={classes.container} {...containerProps}>
+      <div className={classes.tableWrapper} {...tableWrapperProps}>
+        <Table {...tableProps}>
+          {includeHeaders && (
+            <TableHead {...headerProps}>
+              {getHeaders(columns).map((headerRow, headerRowIndex) => (
+                <TableRow
+                  {...resolveProp(rowProps, {
+                    column: {},
+                    rowData: {},
+                    hoveredColumn,
+                    hoveredRowData
+                  })}
+                  {...resolveProp(headerRowProps, {
+                    column: {},
+                    rowData: {},
+                    hoveredColumn,
+                    hoveredRowData
+                  })}
+                  key={`header-row-${headerRowIndex}`}
+                >
+                  {headerRow &&
+                    headerRow.map((column, columnIndex) => {
+                      const contents = column.header || column.name;
 
-      rowProps,
-      headerRowProps,
-      bodyRowProps,
-
-      cellProps: defaultCellProps,
-      headerCellProps: defaultHeaderCellProps,
-      bodyCellProps: defaultBodyCellProps,
-
-      includeHeaders,
-      onHeaderClick,
-      onCellClick,
-      isCellHovered,
-      isCellSelected,
-      pagination,
-      addPlaceholderRows,
-      orderBy,
-      orderDirection,
-
-      classes,
-      ...props
-    } = this.props;
-
-    const { hoveredColumn, hoveredRowData } = this.state;
-
-    return (
-      <div className={classes.container} {...containerProps}>
-        <div className={classes.tableWrapper} {...tableWrapperProps}>
-          <Table {...props}>
-            {includeHeaders && (
-              <TableHead {...headerProps}>
-                {getHeaders(columns).map((headerRow, headerRowIndex) => (
-                  <TableRow
-                    {...resolveProp(rowProps, {
-                      column: {},
-                      rowData: {},
-                      hoveredColumn,
-                      hoveredRowData
-                    })}
-                    {...resolveProp(headerRowProps, {
-                      column: {},
-                      rowData: {},
-                      hoveredColumn,
-                      hoveredRowData
-                    })}
-                    key={`header-row-${headerRowIndex}`}
-                  >
-                    {headerRow &&
-                      headerRow.map((column, columnIndex) => {
-                        const contents = column.header || column.name;
-
-                        const isHovered =
-                          hoveredColumn &&
-                          hoveredRowData &&
-                          isCellHovered &&
-                          isCellHovered({
-                            column,
-                            rowData: {},
-                            hoveredColumn,
-                            hoveredRowData
-                          });
-
-                        const isSelected =
-                          isCellSelected &&
-                          isCellSelected({ column, rowData: {} });
-
-                        const className = classNames({
-                          [classes.cellHovered]: isHovered,
-                          [classes.cellSelected]: isSelected
+                      const isHovered =
+                        hoveredColumn &&
+                        hoveredRowData &&
+                        isCellHovered &&
+                        isCellHovered({
+                          column,
+                          rowData: {},
+                          hoveredColumn,
+                          hoveredRowData
                         });
 
-                        const cellProps = merge(
-                          {},
-                          { className },
-                          resolveProp(defaultCellProps, {
-                            column,
-                            rowData: {},
-                            hoveredColumn,
-                            hoveredRowData
-                          }),
-                          resolveProp(column.cellProps, {
-                            column,
-                            rowData: {},
-                            hoveredColumn,
-                            hoveredRowData
-                          }),
-                          resolveProp(defaultHeaderCellProps, {
-                            column,
-                            rowData: {},
-                            hoveredColumn,
-                            hoveredRowData
-                          }),
-                          resolveProp(column.headerCellProps, {
-                            column,
-                            rowData: {},
-                            hoveredColumn,
-                            hoveredRowData
-                          })
-                        );
+                      const isSelected =
+                        isCellSelected &&
+                        isCellSelected({ column, rowData: {} });
 
-                        return (
-                          <TableCell
-                            {...isCellHovered && {
-                              onMouseEnter: () => {
-                                this.setState({
-                                  hoveredColumn: column,
-                                  hoveredRowData: {}
-                                });
-                              },
-                              onMouseLeave: () =>
-                                this.setState({
-                                  hoveredColumn: null,
-                                  hoveredRowData: null
-                                })
-                            }}
-                            key={`header-cell-${column.name}`}
-                            colSpan={column.colSpan}
-                            rowSpan={column.rowSpan}
-                            {...cellProps}
-                          >
-                            {column.onHeaderClick !== false &&
-                            (column.onHeaderClick || onHeaderClick) ? (
-                              <TableSortLabel
-                                active={
-                                  orderBy &&
-                                  (orderBy === column.name ||
-                                    orderBy === column.orderBy)
-                                }
-                                style={{ width: 'inherit' }} // fix text overflowing
-                                direction={orderDirection}
-                                onClick={() =>
-                                  column.onHeaderClick
-                                    ? column.onHeaderClick()
-                                    : onHeaderClick({ column })
-                                }
-                              >
-                                {contents}
-                              </TableSortLabel>
-                            ) : (
-                              contents
-                            )}
-                          </TableCell>
-                        );
-                      })}
-                  </TableRow>
-                ))}
-              </TableHead>
-            )}
+                      const className = classNames({
+                        [classes.cellHovered]: isHovered,
+                        [classes.cellSelected]: isSelected
+                      });
 
-            <TableBody {...bodyProps}>
-              {data &&
-                data.map((rowData, rowIndex) => {
-                  return (
-                    <TableRow
-                      key={`body-row-${rowIndex}`}
-                      {...resolveProp(rowProps, {
-                        column: {},
-                        rowData,
-                        hoveredColumn,
-                        hoveredRowData
-                      })}
-                      {...resolveProp(bodyRowProps, {
-                        column: {},
-                        rowData,
-                        hoveredColumn,
-                        hoveredRowData
-                      })}
-                    >
-                      {getColumns(columns).map((column, columnIndex) => {
-                        const contents = column.cell
-                          ? column.cell(rowData)
-                          : rowData[column.name];
+                      const cellProps = merge(
+                        {},
+                        { className },
+                        resolveProp(defaultCellProps, {
+                          column,
+                          rowData: {},
+                          hoveredColumn,
+                          hoveredRowData
+                        }),
+                        resolveProp(column.cellProps, {
+                          column,
+                          rowData: {},
+                          hoveredColumn,
+                          hoveredRowData
+                        }),
+                        resolveProp(defaultHeaderCellProps, {
+                          column,
+                          rowData: {},
+                          hoveredColumn,
+                          hoveredRowData
+                        }),
+                        resolveProp(column.headerCellProps, {
+                          column,
+                          rowData: {},
+                          hoveredColumn,
+                          hoveredRowData
+                        })
+                      );
 
-                        const isHovered =
-                          hoveredColumn &&
-                          hoveredRowData &&
-                          isCellHovered &&
-                          isCellHovered({
-                            column,
-                            rowData,
-                            hoveredColumn,
-                            hoveredRowData
-                          });
-
-                        const isSelected =
-                          isCellSelected && isCellSelected({ column, rowData });
-
-                        const className = classNames({
-                          [classes.cellHovered]: isHovered,
-                          [classes.cellSelected]: isSelected
-                        });
-
-                        const cellProps = merge(
-                          {},
-                          { className },
-                          resolveProp(defaultCellProps, {
-                            column,
-                            rowData,
-                            hoveredColumn,
-                            hoveredRowData
-                          }),
-                          resolveProp(column.cellProps, {
-                            column,
-                            rowData,
-                            hoveredColumn,
-                            hoveredRowData
-                          }),
-                          resolveProp(defaultBodyCellProps, {
-                            column,
-                            rowData,
-                            hoveredColumn,
-                            hoveredRowData
-                          }),
-                          resolveProp(column.bodyCellProps, {
-                            column,
-                            rowData,
-                            hoveredColumn,
-                            hoveredRowData
-                          })
-                        );
-
-                        return (
-                          <TableCell
-                            style={{
-                              ...((onCellClick || column.onClick) && {
-                                cursor: 'pointer'
+                      return (
+                        <TableCell
+                          {...isCellHovered && {
+                            onMouseEnter: () => {
+                              setState({
+                                hoveredColumn: column,
+                                hoveredRowData: {}
+                              });
+                            },
+                            onMouseLeave: () =>
+                              setState({
+                                hoveredColumn: null,
+                                hoveredRowData: null
                               })
-                            }}
-                            {...isCellHovered && {
-                              onMouseEnter: () => {
-                                this.setState({
-                                  hoveredColumn: column,
-                                  hoveredRowData: rowData
-                                });
-                              },
-                              onMouseLeave: () =>
-                                this.setState({
-                                  hoveredColumn: null,
-                                  hoveredRowData: null
-                                })
-                            }}
-                            {...onCellClick && {
-                              onClick: () => onCellClick({ column, rowData }) // Can be overridden by cellProps.onClick on column definition
-                            }}
-                            key={`body-cell-${rowIndex}-${column.name}`}
-                            {...cellProps}
-                          >
-                            {contents}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
+                          }}
+                          key={`header-cell-${column.name}`}
+                          colSpan={column.colSpan}
+                          rowSpan={column.rowSpan}
+                          {...cellProps}
+                        >
+                          {column.onHeaderClick !== false &&
+                          (column.onHeaderClick || onHeaderClick) ? (
+                            <TableSortLabel
+                              active={
+                                orderBy &&
+                                (orderBy === column.name ||
+                                  orderBy === column.orderBy)
+                              }
+                              style={{ width: 'inherit' }} // fix text overflowing
+                              direction={orderDirection}
+                              onClick={() =>
+                                column.onHeaderClick
+                                  ? column.onHeaderClick()
+                                  : onHeaderClick({ column })
+                              }
+                            >
+                              {contents}
+                            </TableSortLabel>
+                          ) : (
+                            contents
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                </TableRow>
+              ))}
+            </TableHead>
+          )}
 
-              {/* Fill remaining space to keep pagination controls in consistent location */}
-              {pagination &&
-                addPlaceholderRows &&
-                pagination.rowsPerPage > (data ? data.length : 0) &&
-                Array.from({
-                  length: pagination.rowsPerPage - (data ? data.length : 0)
-                }).map((rowData, rowIndex) => (
+          <TableBody {...bodyProps}>
+            {data &&
+              data.map((rowData, rowIndex) => {
+                return (
                   <TableRow
+                    key={`body-row-${rowIndex}`}
                     {...resolveProp(rowProps, {
                       column: {},
                       rowData,
@@ -319,23 +210,163 @@ class MuiTable extends Component {
                       hoveredColumn,
                       hoveredRowData
                     })}
-                    key={`body-row-placeholder-${rowIndex}`}
                   >
-                    {columns.map(column => (
+                    {getColumns(columns).map((column, columnIndex) => {
+                      const contents = column.cell
+                        ? column.cell(rowData)
+                        : rowData[column.name];
+
+                      const isHovered =
+                        hoveredColumn &&
+                        hoveredRowData &&
+                        isCellHovered &&
+                        isCellHovered({
+                          column,
+                          rowData,
+                          hoveredColumn,
+                          hoveredRowData
+                        });
+
+                      const isSelected =
+                        isCellSelected && isCellSelected({ column, rowData });
+
+                      const className = classNames({
+                        [classes.cellHovered]: isHovered,
+                        [classes.cellSelected]: isSelected
+                      });
+
+                      const cellProps = merge(
+                        {},
+                        { className },
+                        resolveProp(defaultCellProps, {
+                          column,
+                          rowData,
+                          hoveredColumn,
+                          hoveredRowData
+                        }),
+                        resolveProp(column.cellProps, {
+                          column,
+                          rowData,
+                          hoveredColumn,
+                          hoveredRowData
+                        }),
+                        resolveProp(defaultBodyCellProps, {
+                          column,
+                          rowData,
+                          hoveredColumn,
+                          hoveredRowData
+                        }),
+                        resolveProp(column.bodyCellProps, {
+                          column,
+                          rowData,
+                          hoveredColumn,
+                          hoveredRowData
+                        })
+                      );
+
+                      return (
+                        <TableCell
+                          style={{
+                            ...((onCellClick || column.onClick) && {
+                              cursor: 'pointer'
+                            })
+                          }}
+                          {...isCellHovered && {
+                            onMouseEnter: () => {
+                              setState({
+                                hoveredColumn: column,
+                                hoveredRowData: rowData
+                              });
+                            },
+                            onMouseLeave: () =>
+                              setState({
+                                hoveredColumn: null,
+                                hoveredRowData: null
+                              })
+                          }}
+                          {...onCellClick && {
+                            onClick: () => onCellClick({ column, rowData }) // Can be overridden by cellProps.onClick on column definition
+                          }}
+                          key={`body-cell-${rowIndex}-${column.name}`}
+                          {...cellProps}
+                        >
+                          {contents}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
+
+            {/* Fill remaining space to keep pagination controls in consistent location */}
+            {pagination &&
+              addPlaceholderRows &&
+              pagination.rowsPerPage > (data ? data.length : 0) &&
+              Array.from({
+                length: pagination.rowsPerPage - (data ? data.length : 0)
+              }).map((rowData, rowIndex) => (
+                <TableRow
+                  {...resolveProp(rowProps, {
+                    column: {},
+                    rowData,
+                    hoveredColumn,
+                    hoveredRowData
+                  })}
+                  {...resolveProp(bodyRowProps, {
+                    column: {},
+                    rowData,
+                    hoveredColumn,
+                    hoveredRowData
+                  })}
+                  key={`body-row-placeholder-${rowIndex}`}
+                >
+                  {columns.map(column => {
+                    const cellProps = merge(
+                      {},
+                      resolveProp(defaultCellProps, {
+                        column,
+                        rowData,
+                        hoveredColumn,
+                        hoveredRowData
+                      }),
+                      resolveProp(column.cellProps, {
+                        column,
+                        rowData,
+                        hoveredColumn,
+                        hoveredRowData
+                      }),
+                      resolveProp(defaultBodyCellProps, {
+                        column,
+                        rowData,
+                        hoveredColumn,
+                        hoveredRowData
+                      }),
+                      resolveProp(column.bodyCellProps, {
+                        column,
+                        rowData,
+                        hoveredColumn,
+                        hoveredRowData
+                      })
+                    );
+
+                    return (
                       <TableCell
                         style={{ visibility: 'hidden' }}
                         key={`body-cell-placeholder-${rowIndex}-${column.name}`}
-                      />
-                    ))}
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </div>
-        {pagination && <TablePagination component="div" {...pagination} />}
+                        {...cellProps}
+                      >
+                        ' '
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
       </div>
-    );
-  }
+      {pagination && <TablePagination component="div" {...pagination} />}
+    </div>
+  );
 }
 
 MuiTable.propTypes = {
@@ -363,4 +394,4 @@ MuiTable.propTypes = {
   bodyProps: PropTypes.object
 };
 
-export default withStyles(styles)(MuiTable);
+export default MuiTable;

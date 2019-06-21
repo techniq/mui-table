@@ -11,11 +11,7 @@ import { blue, orange, purple } from '@material-ui/core/colors';
 import MuiTable from '../src';
 import { createPersonData, createDessertData } from './data';
 
-const theme = createMuiTheme({
-  typography: {
-    useNextVariants: true,
-  },
-});
+const theme = createMuiTheme();
 
 const hoveredRowClass = css({
   ':hover': {
@@ -94,7 +90,9 @@ storiesOf('Basic', module)
           }
         ]}
         includeHeaders={true}
-        rowProps={{ style: { height: 24 } }}
+        cellProps={{
+          style: { paddingTop: 4, paddingBottom: 4, lineHeight: 'normal' }
+        }}
         style={{ backgroundColor: 'white' }}
       />
     );
@@ -124,7 +122,7 @@ storiesOf('Basic', module)
           }
         ]}
         includeHeaders={true}
-        cellProps={{ padding: 'dense' }}
+        cellProps={{ padding: 'none' }}
         style={{ backgroundColor: 'white' }}
       />
     );
@@ -340,7 +338,7 @@ storiesOf('Headers', module)
         includeHeaders={true}
         headerRowProps={{ style: { height: 24 } }}
         headerCellProps={{ style: { border: 0, background: '#eee' } }}
-        cellProps={{ padding: 'dense' }}
+        cellProps={{ style: { padding: '4px 24px', lineHeight: 'normal' } }}
         style={{ backgroundColor: 'white' }}
       />
     );
@@ -1129,8 +1127,7 @@ storiesOf('Selected', module)
                     checked={state.selectedRowIds.some(id => rowData.id === id)}
                   />
                 ),
-                cellProps: { style: { paddingRight: 0 } },
-                width: 72
+                cellProps: { style: { padding: 0 } }
               },
               {
                 name: 'name',
