@@ -1,6 +1,6 @@
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -109,7 +109,7 @@ function MuiTable(props) {
                         isCellSelected &&
                         isCellSelected({ column, rowData: {} });
 
-                      const className = classNames({
+                      const className = clsx({
                         [classes.cellHovered]: isHovered,
                         [classes.cellSelected]: isSelected
                       });
@@ -230,7 +230,7 @@ function MuiTable(props) {
                       const isSelected =
                         isCellSelected && isCellSelected({ column, rowData });
 
-                      const className = classNames({
+                      const className = clsx({
                         [classes.cellHovered]: isHovered,
                         [classes.cellSelected]: isSelected
                       });
