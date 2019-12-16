@@ -1,15 +1,15 @@
-declare module 'mui-table' {
-  import React from 'react';
-  import { TableProps } from '@material-ui/core/Table';
-  import { TableBodyProps } from '@material-ui/core/TableBody';
-  import { TablePaginationProps } from '@material-ui/core/TablePagination';
-  import { TableRowProps } from '@material-ui/core/TableRow';
-  import { TableCellProps } from '@material-ui/core/TableCell';
+declare module "mui-table" {
+  import React from "react";
+  import { TableProps } from "@material-ui/core/Table";
+  import { TableBodyProps } from "@material-ui/core/TableBody";
+  import { TablePaginationProps } from "@material-ui/core/TablePagination";
+  import { TableRowProps } from "@material-ui/core/TableRow";
+  import { TableCellProps } from "@material-ui/core/TableCell";
 
   export interface ColumnDef<T = any> {
     name: string;
     header?: string | React.ReactNode;
-    cell?: (data: T) => React.ReactNode;
+    cell?: (data: T, index: number) => React.ReactNode;
     cellProps?:
       | TableCellProps
       | ((obj: { rowData: T }) => TableCellProps | void);
