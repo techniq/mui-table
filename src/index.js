@@ -163,7 +163,8 @@ function MuiTable(props) {
                           rowSpan={column.rowSpan}
                           {...cellProps}
                         >
-                          {column.onHeaderClick !== false &&
+                          {column.orderBy !== false &&
+                          column.onHeaderClick !== false &&
                           (column.onHeaderClick || onHeaderClick) ? (
                             <TableSortLabel
                               active={

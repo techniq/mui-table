@@ -15,7 +15,7 @@ declare module "mui-table" {
       | ((obj: { rowData: T }) => TableCellProps | void);
     onHeaderClick?: boolean;
     headerCellProps?: TableCellProps;
-    orderBy?: string;
+    orderBy?: string | boolean | ((a: any, b: any) => number);
     columns?: ColumnDef<T>[];
   }
 
