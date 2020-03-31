@@ -400,4 +400,5 @@ MuiTable.propTypes = {
   bodyProps: PropTypes.object
 };
 
+export { getHeaders, getColumns };
 export default MuiTable;

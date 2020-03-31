@@ -63,6 +63,13 @@ declare module "mui-table" {
       cellSelected?: string;
     };
   }
+
+  export function getHeaders(
+    columns: ColumnDef[]
+  ): ColumnDef & { colSpan?: number; rowSpan?: number }[][];
+
+  export function getColumns(columns: ColumnDef[]): ColumnDef[];
+
   export default class MuiTable<T = any> extends React.Component<
     MuiTableProps<T>
   > {}
