@@ -1,16 +1,26 @@
 import * as deepmerge from 'deepmerge';
+import { ColumnDef } from './index';
 
-export function getHeaders(columns) {
-  const maxDepth = getDepth(columns, 'columns');
-  const result = Array.from({ length: maxDepth }).map(i => []);
+type ColumnDefHeader = ColumnDef & {
+  colSpan?: number;
+  rowSpan?: number;
+};
 
-  function addItems(columns, depth) {
+export function getHeaders(columns: ColumnDef[]) {
+  const maxDepth = getDepth(columns);
+  const result: ColumnDefHeader[][] = Array.from({
+    length: maxDepth,
+  }).map(() => []);
+
+  function addItems(columns: ColumnDef[], depth: number) {
     columns.forEach(column => {
-      const columnDef = { ...column };
+      const columnDef: ColumnDefHeader = {
+        ...column,
+      };
       delete columnDef.columns;
 
       if (column.columns) {
-        const colSpan = getWidth(column, 'columns');
+        const colSpan = getWidth(column);
         if (colSpan > 1) {
           columnDef.colSpan = colSpan;
         }
@@ -29,10 +39,10 @@ export function getHeaders(columns) {
   return result;
 }
 
-export function getColumns(columns) {
-  const result = [];
+export function getColumns(columns: ColumnDef[]) {
+  const result: ColumnDef[] = [];
 
-  function setColumns(column) {
+  function setColumns(column: ColumnDef) {
     if (column.columns == null) {
       result.push(column);
       return;
@@ -45,41 +55,41 @@ export function getColumns(columns) {
   return result;
 }
 
-export function getDepth(arr, childProp) {
-  if (arr == null) {
+export function getDepth(columns: ColumnDef[] | undefined) {
+  if (columns == null) {
     return 0;
   }
 
   let depth = 0;
-  arr.forEach(item => {
-    depth = Math.max(depth, getDepth(item[childProp], childProp));
+  columns.forEach(item => {
+    depth = Math.max(depth, getDepth(item.columns));
   });
 
   return depth + 1;
 }
 
-export function getWidth(item, childProp) {
-  if (item[childProp] == null) {
+export function getWidth(column: ColumnDef) {
+  if (column.columns == null) {
     return 1;
   }
 
   let width = 0;
-  item[childProp].forEach(child => {
-    width += getWidth(child, childProp);
+  column.columns.forEach(child => {
+    width += getWidth(child);
   });
 
   return width;
 }
 
-export function isNil(obj) {
+export function isNil(obj: any) {
   return obj == null;
 }
 
-export function merge(...objects) {
+export function merge(...objects: any[]) {
   const [firstObj] = objects;
   const destination = isNil(firstObj) ? {} : firstObj;
   const existingObjects = objects.filter(source => !isNil(source));
   const sources = [destination].concat(existingObjects);
-  
+
   return deepmerge.all(sources);
 }

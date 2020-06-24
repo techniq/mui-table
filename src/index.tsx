@@ -1,24 +1,28 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import clsx from "clsx";
+import React, { useState } from 'react';
+import clsx from 'clsx';
 
-import { makeStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableFooter from "@material-ui/core/TableFooter";
-import TableHead from "@material-ui/core/TableHead";
-import TablePagination from "@material-ui/core/TablePagination";
-import TableRow from "@material-ui/core/TableRow";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
+import { makeStyles } from '@material-ui/core/styles';
+import Table, { TableProps } from '@material-ui/core/Table';
+import TableBody, { TableBodyProps } from '@material-ui/core/TableBody';
+import TableCell, { TableCellProps } from '@material-ui/core/TableCell';
+import TableHead, { TableHeadProps } from '@material-ui/core/TableHead';
+import TablePagination, {
+  TablePaginationProps,
+} from '@material-ui/core/TablePagination';
+import TableRow, { TableRowProps } from '@material-ui/core/TableRow';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
 
-import { getHeaders, getColumns, merge } from "./utils";
+import { getHeaders, getColumns, merge } from './utils';
 
-const resolveProp = (prop, args) => {
-  return typeof prop === "function" ? prop(args) : prop;
-};
+type ResolvePropType<T> =
+  | T
+  | ((obj: { rowData: T; column: ColumnDef<T> }) => T | void);
 
-export const useStyles = makeStyles((theme) => ({
+function resolveProp<T>(prop: ResolvePropType<T> | undefined, args: any) {
+  return prop instanceof Function ? prop(args) : prop;
+}
+
+export const useStyles = makeStyles(theme => ({
   container: {},
   tableWrapper: {},
   cellSelected: {
@@ -29,7 +33,59 @@ export const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function MuiTable(props) {
+export type ColumnDef<T = any> = {
+  name: string;
+  header?: string | React.ReactNode;
+  cell?: (data: T, index: number) => React.ReactNode;
+  cellProps?: ResolvePropType<TableCellProps>;
+  onClick?: TableCellProps['onClick'];
+  onHeaderClick?: boolean | ((obj: { column: ColumnDef<T> }) => void);
+  headerCellProps?: TableCellProps;
+  bodyCellProps?: TableCellProps;
+  orderBy?: string | boolean | ((a: any, b: any) => number);
+  columns?: ColumnDef<T>[];
+};
+
+export type MuiTableProps<T = any> = {
+  data: T[] | null;
+  columns: ColumnDef<T>[];
+  bodyProps?: TableBodyProps;
+  containerProps?: any;
+  includeHeaders?: boolean;
+  headerProps?: TableHeadProps;
+  rowProps?: ResolvePropType<TableRowProps>;
+  headerRowProps?: ResolvePropType<TableRowProps>;
+  headerCellProps?: ResolvePropType<TableCellProps>;
+  bodyRowProps?: ResolvePropType<TableRowProps>;
+  bodyCellProps?: ResolvePropType<TableCellProps>;
+  cellProps?: ResolvePropType<TableCellProps>;
+  onHeaderClick?: (obj: { column: ColumnDef<T> }) => void;
+  onCellClick?: (obj: { rowData: T; column: ColumnDef<T> }) => void;
+  orderBy?: string;
+  orderDirection?: 'asc' | 'desc';
+  pagination?: TablePaginationProps;
+  addPlaceholderRows?: boolean;
+  tableWrapperProps?: React.HTMLAttributes<HTMLDivElement>;
+
+  isCellHovered?: (obj: {
+    column: ColumnDef<T>;
+    rowData: T | null;
+    hoveredColumn: ColumnDef<T> | null;
+    hoveredRowData: T | null;
+  }) => boolean;
+  isCellSelected?: (obj: {
+    column: ColumnDef<T>;
+    rowData: T | null;
+  }) => boolean;
+  classes?: {
+    container?: string;
+    tableWrapper?: string;
+    cellHovered?: string;
+    cellSelected?: string;
+  };
+} & TableProps;
+
+function MuiTable<T = any>(props: MuiTableProps<T>) {
   const {
     data,
     columns,
@@ -60,7 +116,10 @@ function MuiTable(props) {
     ...tableProps
   } = props;
 
-  const [state, setState] = useState({
+  const [state, setState] = useState<{
+    hoveredColumn: ColumnDef | null;
+    hoveredRowData: T | null;
+  }>({
     hoveredColumn: null,
     hoveredRowData: null,
   });
@@ -77,21 +136,21 @@ function MuiTable(props) {
               {getHeaders(columns).map((headerRow, headerRowIndex) => (
                 <TableRow
                   {...resolveProp(rowProps, {
-                    column: {},
-                    rowData: {},
+                    column: null,
+                    rowData: null,
                     hoveredColumn,
                     hoveredRowData,
                   })}
                   {...resolveProp(headerRowProps, {
-                    column: {},
-                    rowData: {},
+                    column: null,
+                    rowData: null,
                     hoveredColumn,
                     hoveredRowData,
                   })}
                   key={`header-row-${headerRowIndex}`}
                 >
                   {headerRow &&
-                    headerRow.map((column, columnIndex) => {
+                    headerRow.map((column, _columnIndex) => {
                       const contents = column.header || column.name;
 
                       const isHovered =
@@ -100,14 +159,14 @@ function MuiTable(props) {
                         isCellHovered &&
                         isCellHovered({
                           column,
-                          rowData: {},
+                          rowData: null,
                           hoveredColumn,
                           hoveredRowData,
                         });
 
                       const isSelected =
                         isCellSelected &&
-                        isCellSelected({ column, rowData: {} });
+                        isCellSelected({ column, rowData: null });
 
                       const className = clsx({
                         [classes.cellHovered]: isHovered,
@@ -119,25 +178,25 @@ function MuiTable(props) {
                         { className },
                         resolveProp(defaultCellProps, {
                           column,
-                          rowData: {},
+                          rowData: null,
                           hoveredColumn,
                           hoveredRowData,
                         }),
                         resolveProp(column.cellProps, {
                           column,
-                          rowData: {},
+                          rowData: null,
                           hoveredColumn,
                           hoveredRowData,
                         }),
                         resolveProp(defaultHeaderCellProps, {
                           column,
-                          rowData: {},
+                          rowData: null,
                           hoveredColumn,
                           hoveredRowData,
                         }),
                         resolveProp(column.headerCellProps, {
                           column,
-                          rowData: {},
+                          rowData: null,
                           hoveredColumn,
                           hoveredRowData,
                         })
@@ -149,7 +208,7 @@ function MuiTable(props) {
                             onMouseEnter: () => {
                               setState({
                                 hoveredColumn: column,
-                                hoveredRowData: {},
+                                hoveredRowData: null,
                               });
                             },
                             onMouseLeave: () =>
@@ -168,16 +227,15 @@ function MuiTable(props) {
                           (column.onHeaderClick || onHeaderClick) ? (
                             <TableSortLabel
                               active={
-                                orderBy &&
-                                (orderBy === column.name ||
-                                  orderBy === column.orderBy)
+                                orderBy === column.name ||
+                                orderBy === column.orderBy
                               }
-                              style={{ width: "inherit" }} // fix text overflowing
+                              style={{ width: 'inherit' }} // fix text overflowing
                               direction={orderDirection}
                               onClick={() =>
-                                column.onHeaderClick
-                                  ? column.onHeaderClick()
-                                  : onHeaderClick({ column })
+                                typeof column.onHeaderClick === 'function'
+                                  ? column.onHeaderClick({ column })
+                                  : onHeaderClick?.({ column })
                               }
                             >
                               {contents}
@@ -200,22 +258,23 @@ function MuiTable(props) {
                   <TableRow
                     key={`body-row-${rowIndex}`}
                     {...resolveProp(rowProps, {
-                      column: {},
+                      column: null,
                       rowData,
                       hoveredColumn,
                       hoveredRowData,
                     })}
                     {...resolveProp(bodyRowProps, {
-                      column: {},
+                      column: null,
                       rowData,
                       hoveredColumn,
                       hoveredRowData,
                     })}
                   >
-                    {getColumns(columns).map((column, columnIndex) => {
+                    {getColumns(columns).map((column, _columnIndex) => {
                       const contents = column.cell
                         ? column.cell(rowData, rowIndex)
-                        : rowData[column.name];
+                        : // @ts-ignore: add index signature
+                          rowData[column.name];
 
                       const isHovered =
                         hoveredColumn &&
@@ -269,7 +328,7 @@ function MuiTable(props) {
                         <TableCell
                           style={{
                             ...((onCellClick || column.onClick) && {
-                              cursor: "pointer",
+                              cursor: 'pointer',
                             }),
                           }}
                           {...(isCellHovered && {
@@ -287,7 +346,7 @@ function MuiTable(props) {
                           })}
                           {...(onCellClick && {
                             onClick: () => {
-                              if (window.getSelection().toString() == "") {
+                              if (window.getSelection()?.toString() === '') {
                                 onCellClick({ column, rowData }); // Can be overridden by cellProps.onClick on column definition
                               }
                             },
@@ -312,21 +371,21 @@ function MuiTable(props) {
               }).map((rowData, rowIndex) => (
                 <TableRow
                   {...resolveProp(rowProps, {
-                    column: {},
+                    column: null,
                     rowData,
                     hoveredColumn,
                     hoveredRowData,
                   })}
                   {...resolveProp(bodyRowProps, {
-                    column: {},
+                    column: null,
                     rowData,
                     hoveredColumn,
                     hoveredRowData,
                   })}
                   key={`body-row-placeholder-${rowIndex}`}
                 >
-                  {columns.map((column) => {
-                    const cellProps = merge(
+                  {columns.map(column => {
+                    const cellProps: any = merge(
                       {},
                       resolveProp(defaultCellProps, {
                         column,
@@ -356,12 +415,12 @@ function MuiTable(props) {
 
                     cellProps.style = {
                       ...cellProps.style,
-                      visibility: "hidden",
+                      visibility: 'hidden',
                     };
 
                     return (
                       <TableCell
-                        style={{ visibility: "hidden" }}
+                        style={{ visibility: 'hidden' }}
                         key={`body-cell-placeholder-${rowIndex}-${column.name}`}
                         {...cellProps}
                       >
@@ -374,35 +433,13 @@ function MuiTable(props) {
           </TableBody>
         </Table>
       </div>
-      {pagination && <TablePagination component="div" {...pagination} />}
+      {pagination && (
+        // @ts-ignore - component?
+        <TablePagination component="div" {...pagination} />
+      )}
     </div>
   );
 }
-
-MuiTable.propTypes = {
-  addPlaceholderRows: PropTypes.bool,
-  bodyCellProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
-  bodyRowProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
-  cellProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
-  classes: PropTypes.object,
-  columns: PropTypes.array,
-  containerProps: PropTypes.object,
-  data: PropTypes.array,
-  headerCellProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
-  headerRowProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
-  includeHeaders: PropTypes.bool,
-  isCellHovered: PropTypes.func,
-  isCellSelected: PropTypes.func,
-  onCellClick: PropTypes.func,
-  onHeaderClick: PropTypes.func,
-  orderBy: PropTypes.string,
-  orderDirection: PropTypes.string,
-  pagination: PropTypes.object,
-  rowProps: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
-  tableWrapperProps: PropTypes.object,
-  headerProps: PropTypes.object,
-  bodyProps: PropTypes.object,
-};
 
 export { getHeaders, getColumns };
 export default MuiTable;

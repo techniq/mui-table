@@ -1,51 +1,67 @@
 {
   "name": "mui-table",
-  "version": "3.3.2",
-  "description": "Improved Material-UI table",
+  "version": "0.1.0",
+  "author": "Sean Lynch",
+  "license": "MIT",
   "main": "dist/index.js",
-  "types": "index.d.ts",
+  "module": "dist/mui-table.esm.js",
+  "typings": "dist/index.d.ts",
   "files": [
     "dist",
-    "index.d.ts"
+    "src"
   ],
-  "repository": "https://github.com/techniq/mui-table",
-  "author": "Sean Lynch <techniq35@gmail.com>",
-  "license": "MIT",
-  "peerDependencies": {
-    "@material-ui/core": "^4.1.1",
-    "react": ">=16.8.1"
-  },
-  "dependencies": {
-    "clsx": "^1.0.4",
-    "deepmerge": "^3.3.0",
-    "prop-types": "^15.7.2"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.5",
-    "@babel/plugin-proposal-class-properties": "^7.4.4",
-    "@babel/plugin-proposal-object-rest-spread": "^7.4.4",
-    "@babel/plugin-transform-react-jsx": "^7.0.0",
-    "@babel/preset-env": "^7.4.5",
-    "@material-ui/core": "^4.1.1",
-    "@reactions/component": "^2.0.2",
-    "@storybook/react": "^4.1.11",
-    "babel-jest": "^24.8.0",
-    "faker": "^4.1.0",
-    "gh-pages": "^2.0.1",
-    "glamor": "^2.20.40",
-    "jest": "^24.8.0",
-    "react": "^16.8.1",
-    "react-dom": "^16.8.1"
+  "engines": {
+    "node": ">=10"
   },
   "scripts": {
-    "test": "jest",
-    "test-watch": "jest --watch",
-    "build": "NODE_ENV=production babel src -d dist",
-    "storybook": "start-storybook -p 9009 -c stories",
-    "build-docs": "build-storybook -c stories -o docs",
-    "deploy-docs": "gh-pages -d docs",
-    "preversion": "npm run build",
-    "postpublish": "npm run build-docs && npm run deploy-docs"
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --passWithNoTests",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "peerDependencies": {
+    "react": ">=16"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.10.2",
+    "clsx": "^1.1.1",
+    "deepmerge": "^4.2.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.3",
+    "@storybook/addon-actions": "^5.3.19",
+    "@storybook/addon-docs": "^5.3.19",
+    "@storybook/addon-info": "^5.3.19",
+    "@storybook/addon-links": "^5.3.19",
+    "@storybook/addons": "^5.3.19",
+    "@storybook/react": "^5.3.19",
+    "@types/faker": "^4.1.12",
+    "@types/react": "^16.9.38",
+    "@types/react-dom": "^16.9.8",
+    "babel-loader": "^8.1.0",
+    "faker": "^4.1.0",
+    "husky": "^4.2.5",
+    "react": "^16.13.1",
+    "react-docgen-typescript-loader": "^3.7.2",
+    "react-dom": "^16.13.1",
+    "react-is": "^16.13.1",
+    "ts-loader": "^7.0.5",
+    "tsdx": "^0.13.2",
+    "tslib": "^2.0.0",
+    "typescript": "^3.9.5"
   }
 }
