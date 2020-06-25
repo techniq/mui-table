@@ -14,7 +14,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: 'https://registry.npmjs.org' # creates .npmrc with ${NODE_AUTH_TOKEN} - https://help.github.com/en/actions/language-and-framework-guides/publishing-nodejs-packages#publishing-packages-to-github-packages
 
       - name: Cache Node.js modules
         uses: actions/cache@v2
@@ -50,17 +50,17 @@ jobs:
 
       - name: Publish Package
         run: npm publish --access public
-        # if: steps.check.outputs.changed == 'true'
+        if: steps.check.outputs.changed == 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Build Docs
-        # if: steps.check.outputs.changed == 'true'
+        if: steps.check.outputs.changed == 'true'
         run: npm run build-docs
 
       - name: Publish Docs
         uses: JamesIves/github-pages-deploy-action@releases/v3
-        # if: steps.check.outputs.changed == 'true'
+        if: steps.check.outputs.changed == 'true'
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
