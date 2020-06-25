@@ -20,7 +20,7 @@
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-docs": "build-storybook -o docs"
   },
   "husky": {
     "hooks": {
