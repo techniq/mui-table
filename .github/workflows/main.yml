@@ -54,12 +54,12 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Build Docs
-        # if: steps.check.outputs.changed == 'true'
+        if: steps.check.outputs.changed == 'true'
         run: npm run build-docs
 
       - name: Publish Docs
         uses: JamesIves/github-pages-deploy-action@releases/v3
-        # if: steps.check.outputs.changed == 'true'
+        if: steps.check.outputs.changed == 'true'
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
