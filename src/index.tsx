@@ -14,11 +14,14 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 
 import { getHeaders, getColumns, merge } from './utils';
 
-type ResolvePropType<T> =
+type ResolvePropType<T, TData> =
   | T
-  | ((obj: { rowData: T; column: ColumnDef<T> }) => T | void);
+  | ((obj: { rowData: TData; column: ColumnDef<TData> }) => T | void);
 
-function resolveProp<T>(prop: ResolvePropType<T> | undefined, args: any) {
+function resolveProp<T, TData>(
+  prop: ResolvePropType<T, TData> | undefined,
+  args: any
+) {
   return prop instanceof Function ? prop(args) : prop;
 }
 
@@ -33,34 +36,34 @@ export const useStyles = makeStyles(theme => ({
   },
 }));
 
-export type ColumnDef<T = any> = {
+export type ColumnDef<TData = any> = {
   name: string;
   header?: string | React.ReactNode;
-  cell?: (data: T, index: number) => React.ReactNode;
-  cellProps?: ResolvePropType<TableCellProps>;
+  cell?: (data: TData, index: number) => React.ReactNode;
+  cellProps?: ResolvePropType<TableCellProps, TData>;
   onClick?: TableCellProps['onClick'];
-  onHeaderClick?: boolean | ((obj: { column: ColumnDef<T> }) => void);
+  onHeaderClick?: boolean | ((obj: { column: ColumnDef<TData> }) => void);
   headerCellProps?: TableCellProps;
   bodyCellProps?: TableCellProps;
   orderBy?: string | boolean | ((a: any, b: any) => number);
-  columns?: ColumnDef<T>[];
+  columns?: ColumnDef<TData>[];
 };
 
-export type MuiTableProps<T = any> = {
-  data: T[] | null;
-  columns: ColumnDef<T>[];
+export type MuiTableProps<TData = any> = {
+  data: TData[] | null;
+  columns: ColumnDef<TData>[];
   bodyProps?: TableBodyProps;
   containerProps?: any;
   includeHeaders?: boolean;
   headerProps?: TableHeadProps;
-  rowProps?: ResolvePropType<TableRowProps>;
-  headerRowProps?: ResolvePropType<TableRowProps>;
-  headerCellProps?: ResolvePropType<TableCellProps>;
-  bodyRowProps?: ResolvePropType<TableRowProps>;
-  bodyCellProps?: ResolvePropType<TableCellProps>;
-  cellProps?: ResolvePropType<TableCellProps>;
-  onHeaderClick?: (obj: { column: ColumnDef<T> }) => void;
-  onCellClick?: (obj: { rowData: T; column: ColumnDef<T> }) => void;
+  rowProps?: ResolvePropType<TableRowProps, TData>;
+  headerRowProps?: ResolvePropType<TableRowProps, TData>;
+  headerCellProps?: ResolvePropType<TableCellProps, TData>;
+  bodyRowProps?: ResolvePropType<TableRowProps, TData>;
+  bodyCellProps?: ResolvePropType<TableCellProps, TData>;
+  cellProps?: ResolvePropType<TableCellProps, TData>;
+  onHeaderClick?: (obj: { column: ColumnDef<TData> }) => void;
+  onCellClick?: (obj: { rowData: TData; column: ColumnDef<TData> }) => void;
   orderBy?: string;
   orderDirection?: 'asc' | 'desc';
   pagination?: TablePaginationProps;
@@ -68,14 +71,14 @@ export type MuiTableProps<T = any> = {
   tableWrapperProps?: React.HTMLAttributes<HTMLDivElement>;
 
   isCellHovered?: (obj: {
-    column: ColumnDef<T>;
-    rowData: T | null;
-    hoveredColumn: ColumnDef<T> | null;
-    hoveredRowData: T | null;
+    column: ColumnDef<TData>;
+    rowData: TData | null;
+    hoveredColumn: ColumnDef<TData> | null;
+    hoveredRowData: TData | null;
   }) => boolean;
   isCellSelected?: (obj: {
-    column: ColumnDef<T>;
-    rowData: T | null;
+    column: ColumnDef<TData>;
+    rowData: TData | null;
   }) => boolean;
   classes?: {
     container?: string;
