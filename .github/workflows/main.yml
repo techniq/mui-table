@@ -39,7 +39,15 @@ jobs:
       - name: Build
         run: npm run build --if-present
 
-      - name: Publish (if new version)
-        uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
+      - name: Check version changes
+        uses: EndBug/version-check@v1
+        id: check
+
+      - name: Version update detected
+        if: steps.check.outputs.changed == 'true'
+        run: 'echo "Version change found! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
+
+      - run: npm publish --access public
+        if: steps.check.outputs.changed == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
