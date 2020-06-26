@@ -437,7 +437,7 @@ function MuiTable<T = any>(props: MuiTableProps<T>) {
         </Table>
       </div>
       {pagination && (
-        // @ts-ignore - component?
+        // @ts-ignore - `component` explicitly omitted from props but allowed (https://github.com/mui-org/material-ui/commit/8dc12394addced6c1ae34e0a05a3a799efe4ca6c#diff-33ba99dbf7e0ca4f0d9c07e27849f8d3R47)
         <TablePagination component="div" {...pagination} />
       )}
     </div>
