@@ -1,6 +1,6 @@
 {
   "name": "mui-table",
-  "version": "4.0.2",
+  "version": "4.1.0",
   "author": "Sean Lynch",
   "license": "MIT",
   "main": "dist/index.js",
