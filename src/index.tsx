@@ -445,4 +445,9 @@ function MuiTable<T = any>(props: MuiTableProps<T>) {
 }
 
 export { getHeaders, getColumns };
-export default MuiTable;
+
+// export default MuiTable;
+// Workaround: Generic Props lost with React memo - https://github.com/DefinitelyTyped/DefinitelyTyped/issues/37087#issuecomment-542793243
+// export default React.memo(MuiTable);
+const typedMemo: <T>(c: T) => T = React.memo;
+export default typedMemo(MuiTable);
